@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MedOps</string>
+    <string name="reset_password_msg">Enter your registered email below.  </string>
+    <string name="reset_password_msg1">we will send your RESET link via Email.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open">Open navigation drawer</string>
+    <string name="close">Close navigation drawer</string>
+</resources>
