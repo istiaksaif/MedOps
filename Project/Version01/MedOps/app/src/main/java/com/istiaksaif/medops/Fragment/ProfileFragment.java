@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment {
                     String img = ""+dataSnapshot.child("imageUrl").getValue();
                     String receivephone = ""+dataSnapshot.child("phone").getValue();
                     String receivenid = "NID :   "+dataSnapshot.child("nid").getValue();
-                    
+
                     fullName.setText(name);
                     DOB.setText(dob);
                     BloodGroup.setText(blood);
