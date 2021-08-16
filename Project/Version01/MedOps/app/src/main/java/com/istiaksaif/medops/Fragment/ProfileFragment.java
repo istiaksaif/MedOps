@@ -1,15 +1,22 @@
 package com.istiaksaif.medops.Fragment;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
 import com.istiaksaif.medops.R;
 import com.istiaksaif.medops.Utils.ImageGetHelper;
 import com.squareup.picasso.Picasso;
@@ -41,12 +50,14 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
+import static com.istiaksaif.medops.Utils.ImageGetHelper.CAMERA_REQUEST_CODE;
+import static com.istiaksaif.medops.Utils.ImageGetHelper.STORAGE_REQUEST_CODE;
 
 public class ProfileFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
     private ImageView logoutButton,imageView;
-    private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup;
+    private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup,Height,Weight,Age,editAddress,editEmail,editPhone,userAddress;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private Uri imageUri;
@@ -68,10 +79,17 @@ public class ProfileFragment extends Fragment {
         fullName = view.findViewById(R.id.profilefullname);
         DOB = view.findViewById(R.id.dob);
         BloodGroup = view.findViewById(R.id.bloodgroup);
+        Age = view.findViewById(R.id.age);
+        Height = view.findViewById(R.id.height);
+        Weight = view.findViewById(R.id.weight);
         email = view.findViewById(R.id.profileemail);
         phone = view.findViewById(R.id.phonenum);
         nid = view.findViewById(R.id.nid);
         personalinfo = view.findViewById(R.id.personalinfo);
+        editAddress = view.findViewById(R.id.editaddress);
+        editEmail = view.findViewById(R.id.editemail);
+        editPhone = view.findViewById(R.id.editphone);
+        userAddress = view.findViewById(R.id.address);
 
 
         progressDialog = new ProgressDialog(getActivity());
@@ -86,11 +104,15 @@ public class ProfileFragment extends Fragment {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
                     String name = ""+dataSnapshot.child("name").getValue();
                     String dob = "DOB :  "+dataSnapshot.child("dob").getValue();
-                    String blood = "   "+dataSnapshot.child("bloodgroup").getValue();
+                    String blood = "Blood Group :  "+dataSnapshot.child("bloodgroup").getValue();
+                    String height = "Height :  "+dataSnapshot.child("height").getValue()+" cm";
+                    String weight = "Weight :  "+dataSnapshot.child("weight").getValue()+" kg";
+                    String age = "Age :  "+dataSnapshot.child("age").getValue();
                     String retriveEmail = "   "+dataSnapshot.child("email").getValue();
                     String img = ""+dataSnapshot.child("imageUrl").getValue();
-                    String receivephone = ""+dataSnapshot.child("phone").getValue();
-                    String receivenid = "NID :   "+dataSnapshot.child("nid").getValue();
+                    String receivephone = "  "+dataSnapshot.child("phone").getValue();
+                    String receivenid = "NID :  "+dataSnapshot.child("nid").getValue();
+                    String address = "         "+dataSnapshot.child("address").getValue();
 
                     fullName.setText(name);
                     DOB.setText(dob);
@@ -98,6 +120,10 @@ public class ProfileFragment extends Fragment {
                     email.setText(retriveEmail);
                     phone.setText(receivephone);
                     nid.setText(receivenid);
+                    Age.setText(age);
+                    Height.setText(height);
+                    Weight.setText(weight);
+                    userAddress.setText(address);
 
                     try {
                         Picasso.get().load(img).resize(320,320).into(imageView);
@@ -124,10 +150,81 @@ public class ProfileFragment extends Fragment {
         personalinfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
+                startActivity(intent);
             }
         });
+
+        editAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Update Address");
+                showMoreUpdating("address");
+            }
+        });
+        editEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Update Email");
+                showMoreUpdating("email");
+            }
+        });
+        editPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Update Phone Number");
+                showMoreUpdating("phone");
+            }
+        });
+    }
+
+    private void showMoreUpdating(String key) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Update "+ key);
+        LinearLayout linearLayout = new LinearLayout(getActivity());
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(10,10,10,10);
+        TextInputEditText editText = new TextInputEditText(getActivity());
+        editText.setHint("Enter "+key);
+        linearLayout.addView(editText);
+
+        builder.setView(linearLayout);
+        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String value = editText.getText().toString().trim();
+                if(!TextUtils.isEmpty(value)){
+                    progressDialog.show();
+                    HashMap<String, Object> result = new HashMap<>();
+                    result.put(key, value);
+
+                    databaseReference.child(uid).updateChildren(result)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getActivity(),"Updating "+key,Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getActivity(),"Error ",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }else {
+                    Toast.makeText(getActivity(),"Please Enter "+key,Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     @Override
@@ -140,9 +237,12 @@ public class ProfileFragment extends Fragment {
                 imageView.setImageURI(imageUri);
             }
             if(requestCode == getImageFunction.IMAGE_PICK_CAMERA_CODE){
+//                String s = getImageFunction.pathFile;
+//                Bitmap bitmap = BitmapFactory.decodeFile(s);
+//                imageView.setImageBitmap(bitmap);
                 try {
-                    uploadProfilePhoto(imageUri);
-                    imageView.setImageURI(imageUri);
+                    uploadProfilePhoto(getImageFunction.imageUri);
+                    imageView.setImageURI(getImageFunction.imageUri);
                 }catch (Exception e){
                    e.printStackTrace();
                 }

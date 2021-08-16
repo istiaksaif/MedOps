@@ -56,11 +56,11 @@
                         android:textColor="@color/dark_blue"
                         android:gravity="center_vertical"
                         android:text="Personal Info"
-                        android:textSize="16dp"
-                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="18dp"
+                        android:fontFamily="@font/poppins"
                         android:drawableEnd="@drawable/pen"/>
                     <TextView
-                        android:id="@+id/nid"
+                        android:id="@+id/age"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -68,8 +68,7 @@
                         android:textColor="@color/dark_blue"
                         android:gravity="center_vertical"
                         android:textSize="14dp"
-                        android:fontFamily="@font/poppins"/>
-
+                        android:fontFamily="@font/poppins_light"/>
                     <TextView
                         android:id="@+id/dob"
                         android:layout_width="match_parent"
@@ -79,7 +78,7 @@
                         android:textColor="@color/dark_blue"
                         android:gravity="center_vertical"
                         android:textSize="14dp"
-                        android:fontFamily="@font/poppins"/>
+                        android:fontFamily="@font/poppins_light"/>
 
                     <TextView
                         android:id="@+id/bloodgroup"
@@ -89,9 +88,82 @@
                         android:text=""
                         android:textColor="@color/dark_blue"
                         android:gravity="center_vertical"
-                        android:textSize="16dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:drawableStart="@drawable/ic_drop_of_blood"/>
+                        android:textSize="14dp"
+                        android:fontFamily="@font/poppins_light"/>
+                    <TextView
+                        android:id="@+id/nid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text=""
+                        android:textColor="@color/dark_blue"
+                        android:gravity="center_vertical"
+                        android:textSize="14dp"
+                        android:fontFamily="@font/poppins_light"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+                        <TextView
+                            android:id="@+id/height"
+                            android:layout_width="0dp"
+                            android:layout_weight=".5"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text=""
+                            android:textColor="@color/dark_blue"
+                            android:gravity="center_vertical"
+                            android:textSize="14dp"
+                            android:fontFamily="@font/poppins_light"/>
+                        <TextView
+                            android:id="@+id/weight"
+                            android:layout_width="0dp"
+                            android:layout_weight=".5"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text=""
+                            android:textColor="@color/dark_blue"
+                            android:gravity="center_vertical"
+                            android:textSize="14dp"
+                            android:fontFamily="@font/poppins_light"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/background"
+                    android:elevation="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:paddingEnd="2dp">
+                    <TextView
+                        android:id="@+id/editaddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/dark_blue"
+                        android:gravity="center_vertical"
+                        android:text="Address"
+                        android:textSize="18dp"
+                        android:fontFamily="@font/poppins"
+                        android:drawableEnd="@drawable/pen"/>
+                    <TextView
+                        android:id="@+id/address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="  "
+                        android:textColor="@color/dark_blue"
+                        android:gravity="center_vertical"
+                        android:textSize="14dp"
+                        android:fontFamily="@font/poppins"
+                        android:drawableStart="@drawable/ic_address"/>
 
                 </LinearLayout>
 
@@ -107,6 +179,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp">
                     <TextView
+                        android:id="@+id/editemail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingStart="10dp"
@@ -114,8 +187,8 @@
                         android:textColor="@color/dark_blue"
                         android:gravity="center_vertical"
                         android:text="Email"
-                        android:textSize="16dp"
-                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="18dp"
+                        android:fontFamily="@font/poppins"
                         android:drawableEnd="@drawable/pen"/>
                     <TextView
                         android:id="@+id/profileemail"
@@ -141,6 +214,7 @@
                     android:paddingEnd="2dp"
                     android:layout_marginBottom="10dp">
                     <TextView
+                        android:id="@+id/editphone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingStart="10dp"
@@ -148,8 +222,8 @@
                         android:textColor="@color/dark_blue"
                         android:gravity="center_vertical"
                         android:text="Phone Number"
-                        android:textSize="16dp"
-                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="18dp"
+                        android:fontFamily="@font/poppins"
                         android:drawableEnd="@drawable/pen"/>
                     <TextView
                         android:id="@+id/phonenum"
