@@ -49,9 +49,10 @@
                 android:layout_height="match_parent"
                 app:tabGravity="fill"
                 app:tabMode="fixed"
-                app:tabIndicatorColor="@color/pink"
+                app:tabIconTint="@color/dark"
+                app:tabIndicatorColor="@color/green"
                 app:tabTextColor="@color/dark_blue"
-                app:tabSelectedTextColor="@color/pink"
+                app:tabSelectedTextColor="@color/green"
                 android:background="@color/white"
                 app:layout_collapseMode="pin"/>
         </androidx.appcompat.widget.Toolbar>
