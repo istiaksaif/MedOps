@@ -1,13 +1,10 @@
 package com.istiaksaif.medops.Fragment;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -50,8 +47,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
-import static com.istiaksaif.medops.Utils.ImageGetHelper.CAMERA_REQUEST_CODE;
-import static com.istiaksaif.medops.Utils.ImageGetHelper.STORAGE_REQUEST_CODE;
 
 public class ProfileFragment extends Fragment {
 

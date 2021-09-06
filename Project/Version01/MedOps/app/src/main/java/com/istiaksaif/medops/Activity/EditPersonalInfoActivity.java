@@ -41,7 +41,6 @@ import java.util.HashMap;
 public class EditPersonalInfoActivity extends AppCompatActivity {
 
     private TextInputEditText fullName,dateOfBirth,nid,height,weight;
-//    private TextInputLayout lname,lnid,lheight,lweight,lblood;
     private MaterialAutoCompleteTextView bloodGroup;
     private Button nextButton;
     private String date;

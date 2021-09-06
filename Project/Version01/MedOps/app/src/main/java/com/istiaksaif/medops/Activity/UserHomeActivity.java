@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.istiaksaif.medops.Adapter.TabViewPagerAdapter;
+import com.istiaksaif.medops.Fragment.CommunityFragment;
+import com.istiaksaif.medops.Fragment.DoctorsListFragment;
 import com.istiaksaif.medops.Fragment.ProfileFragment;
 import com.istiaksaif.medops.Fragment.UserHomeFragment;
 import com.istiaksaif.medops.R;
@@ -64,46 +66,31 @@ public class UserHomeActivity extends AppCompatActivity {
         tabviewPager = (ViewPager)findViewById(R.id.tabviewpager);
         TabViewPagerAdapter tabViewPagerAdapter = new TabViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         tabViewPagerAdapter.AddFragment(new ProfileFragment(),null);
-        tabViewPagerAdapter.AddFragment(new UserHomeFragment(),null);
-        tabViewPagerAdapter.AddFragment(new UserHomeFragment(),null);
+        tabViewPagerAdapter.AddFragment(new CommunityFragment(),null);
+        tabViewPagerAdapter.AddFragment(new DoctorsListFragment(),null);
         tabViewPagerAdapter.AddFragment(new UserHomeFragment(),null);
         tabviewPager.setAdapter(tabViewPagerAdapter);
         tabviewPager.setCurrentItem(3);
         tabLayout.setupWithViewPager(tabviewPager);
-        LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(3));
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-        layoutParams.weight = 1f;
-        layout.setLayoutParams(layoutParams);
-        LinearLayout layout1 = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(2));
-        LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) layout1.getLayoutParams();
-        layoutParams1.weight = 1f;
-        layout1.setLayoutParams(layoutParams1);
-        LinearLayout layout2 = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(1));
-        LinearLayout.LayoutParams layoutParams2 = (LinearLayout.LayoutParams) layout2.getLayoutParams();
-        layoutParams2.weight = 1f;
-        layout2.setLayoutParams(layoutParams2);
-        LinearLayout layout3 = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(0));
-        LinearLayout.LayoutParams layoutParams3 = (LinearLayout.LayoutParams) layout3.getLayoutParams();
-        layoutParams3.weight = 1f;
-        layout3.setLayoutParams(layoutParams3);
+
         tabLayout.getTabAt(0).setIcon(R.drawable.profile);
         tabLayout.getTabAt(3).setIcon(R.drawable.home);
         tabLayout.getTabAt(1).setIcon(R.drawable.community_chat);
         tabLayout.getTabAt(2).setIcon(R.drawable.doctor);
 
-        tabviewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(@NonNull View page, float position) {
-                page.setTranslationX(page.getWidth()* -position);
-                if(position <= -1 || position >= 1){
-                    page.setAlpha(0);
-                }else if(position==0){
-                    page.setAlpha(1);
-                }else {
-                    page.setAlpha(1-Math.abs(position));
-                }
-            }
-        });
+//        tabviewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
+//            @Override
+//            public void transformPage(@NonNull View page, float position) {
+//                page.setTranslationX(page.getWidth()* -position);
+//                if(position <= -1 || position >= 1){
+//                    page.setAlpha(0);
+//                }else if(position==0){
+//                    page.setAlpha(1);
+//                }else {
+//                    page.setAlpha(1-Math.abs(position));
+//                }
+//            }
+//        });
         //appDrawer
 
         drawerLayout = findViewById(R.id.drawer_layout);
