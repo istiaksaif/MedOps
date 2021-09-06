@@ -15,8 +15,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.istiaksaif.medops.R;
 
 import java.util.HashMap;
@@ -89,6 +94,41 @@ public class checkActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Please Enter ", Toast.LENGTH_SHORT).show();
                 }
                 dialog.dismiss();
+            }
+        });
+    }
+
+    private void checkUserInfo() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        Query query = databaseReference.child(user.getUid());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child("isUser").getValue(String.class).equals("User")) {
+                    Intent intent = new Intent(checkActivity.this, UserHomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                if (snapshot.child("isUser").getValue(String.class).equals("Doctor")) {
+                    Intent intent = new Intent(checkActivity.this, UserHomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                if (snapshot.child("isUser").getValue(String.class).equals("Nurse")) {
+                    Intent intent = new Intent(checkActivity.this, UserHomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                if (snapshot.child("isUser").getValue(String.class).equals("Admin")) {
+                    Intent intent = new Intent(checkActivity.this, AdminManagerHomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

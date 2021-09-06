@@ -174,10 +174,30 @@ public class LogInActivity extends AppCompatActivity {
                     updateUI(user);
                 }
                 else{
-                    Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
-                    startActivity(intent);
-                    progressDialog.dismiss();
-                    finish();
+                    if (snapshot.child("isUser").getValue(String.class).equals("User")) {
+                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
+                        startActivity(intent);
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                    if (snapshot.child("isUser").getValue(String.class).equals("Doctor")) {
+                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
+                        startActivity(intent);
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                    if (snapshot.child("isUser").getValue(String.class).equals("Nurse")) {
+                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
+                        startActivity(intent);
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                    if (snapshot.child("isUser").getValue(String.class).equals("Admin")) {
+                        Intent intent = new Intent(LogInActivity.this, AdminManagerHomeActivity.class);
+                        startActivity(intent);
+                        progressDialog.dismiss();
+                        finish();
+                    }
                 }
             }
 
@@ -244,7 +264,7 @@ public class LogInActivity extends AppCompatActivity {
         String pname = user.getDisplayName();
         String pEmail = user.getEmail();
         String Status = "";
-        User userhelp = new User(pname,pEmail,null,"","","","","","",user.getUid(),Status);
+        User userhelp = new User(pname,pEmail,null,"User","","","","","",user.getUid(),Status);
         databaseReference.child(mAuth.getCurrentUser().getUid()).setValue(userhelp);
         updateUI(user);
     }
