@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.istiaksaif.medops">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -15,8 +15,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MedOps">
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".Activity.LogInActivity"
+        <activity android:name=".Activity.QAActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/Theme.statusBarTransparent"/>
+        <activity android:name=".Activity.AskQusActivity"/>
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".Activity.LogInActivity"
             android:theme="@style/Theme.statusBarTransparent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,24 +29,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.RegistrationActivity"
-            android:theme="@style/Theme.statusBarTransparent"/>
-        <activity android:name=".Activity.checkActivity"/>
-        <activity android:name=".Activity.UserHomeActivity"/>
-        <activity android:name=".Activity.EditPersonalInfoActivity"/>
+        <activity
+            android:name=".Activity.RegistrationActivity"
+            android:theme="@style/Theme.statusBarTransparent" />
+        <activity android:name=".Activity.checkActivity" />
+        <activity android:name=".Activity.UserHomeActivity" />
+        <activity android:name=".Activity.EditPersonalInfoActivity" />
+        <activity android:name=".Activity.AdminManagerHomeActivity" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <provider
-            android:authorities="com.istiaksaif.medops.fileprovider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.istiaksaif.medops.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths">
-
-            </meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 
