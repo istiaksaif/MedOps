@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.istiaksaif.medops">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,14 +16,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MedOps">
-        <activity android:name=".Activity.QAActivity"
+        <activity
+            android:name=".Activity.OutGoingActivity"
+            android:exported="true"
+            android:theme="@style/Theme.statusBarTransparent"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activity.IncomingCallActivity"
+            android:exported="true"
+            android:theme="@style/Theme.statusBarTransparent"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activity.DoctorHomeActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.AppointmentDoctorActivity"
+            android:theme="@style/Theme.statusBarTransparent"
             android:windowSoftInputMode="adjustPan"
-            android:theme="@style/Theme.statusBarTransparent"/>
-        <activity android:name=".Activity.AskQusActivity"/>
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activity.QAActivity"
+            android:theme="@style/Theme.statusBarTransparent"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activity.AskQusActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".Activity.LogInActivity"
-            android:theme="@style/Theme.statusBarTransparent">
+            android:theme="@style/Theme.statusBarTransparent"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,11 +55,16 @@
         </activity>
         <activity
             android:name=".Activity.RegistrationActivity"
-            android:theme="@style/Theme.statusBarTransparent" />
-        <activity android:name=".Activity.checkActivity" />
-        <activity android:name=".Activity.UserHomeActivity" />
-        <activity android:name=".Activity.EditPersonalInfoActivity" />
-        <activity android:name=".Activity.AdminManagerHomeActivity" />
+            android:theme="@style/Theme.statusBarTransparent"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activity.checkActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activity.UserHomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activity.EditPersonalInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activity.AdminManagerHomeActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="preloaded_fonts"
@@ -50,6 +79,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <service android:name=".Utils.FirebaseNotificationService"
+            android:exported="false"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

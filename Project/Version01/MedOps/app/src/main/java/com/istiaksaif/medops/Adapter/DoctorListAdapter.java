@@ -12,11 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.istiaksaif.medops.Activity.DoctorActivity;
+import com.istiaksaif.medops.Activity.AppointmentDoctorActivity;
 import com.istiaksaif.medops.Model.DoctorItem;
 import com.istiaksaif.medops.R;
 
@@ -57,21 +58,26 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
             holder.appointmentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    HashMap<String, Object> result = new HashMap<>();
-                    result.put("userId", uid);
-                    result.put("status", "pending");
-                    databaseReference.child("ClubInfo").child(DocId).child("membersList").child(uid).updateChildren(result);
-                    holder.appointmentButton.setText("pending");
+                    final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                    bottomSheetDialog.setContentView(R.layout.appoinment_popup);
+                    bottomSheetDialog.setCanceledOnTouchOutside(false);
+
+                    bottomSheetDialog.show();
+//                    HashMap<String, Object> result = new HashMap<>();
+//                    result.put("userId", uid);
+//                    result.put("status", "pending");
+//                    databaseReference.child("Doctors").child(DocId).child("patientsList").child(uid).updateChildren(result);
+//                    holder.appointmentButton.setText("pending");
                 }
             });
-        }else if(mdata.get(position).getStatus().equals("conform")){
+        }else if(mdata.get(position).getStatus().equals("confirm")){
             holder.appointmentButton.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, DoctorActivity.class);
+                Intent intent = new Intent(context, AppointmentDoctorActivity.class);
                 intent.putExtra("doctorId",DocId);
                 context.startActivity(intent);
             }

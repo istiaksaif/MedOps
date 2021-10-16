@@ -52,21 +52,22 @@ public class DoctorsListFragment extends Fragment {
         GetDataFromFirebase();
     }
     private void GetDataFromFirebase() {
-        Query query = doctorsDatabaseRef.child("Doctors");
+        Query query = doctorsDatabaseRef.child("users").orderByChild("isUser").equalTo("Doctor");
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ClearAll();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
-                        DoctorItem doctorItem = new DoctorItem();
-                        doctorItem.setDoctorName(snapshot.child("doctorName").getValue().toString());
-                        doctorItem.setImage(snapshot.child("image").getValue().toString());
-                        doctorItem.setDoctorId(snapshot.child("doctorId").getValue().toString());
-                        doctorItem.setStatus(snapshot.child("status").getValue().toString());
+                        if (snapshot.child("verifyStatus").getValue().toString().equals("verified")){
+                            DoctorItem doctorItem = new DoctorItem();
+                            doctorItem.setDoctorName(snapshot.child("doctorName").getValue().toString());
+                            doctorItem.setImage(snapshot.child("image").getValue().toString());
+                            doctorItem.setDoctorId(snapshot.child("doctorId").getValue().toString());
+                            doctorItem.setStatus(snapshot.child("status").getValue().toString());
 
-                        doctorItemList.add(doctorItem);
-
+                            doctorItemList.add(doctorItem);
+                        }
                     } catch (Exception e) {
 
                     }
