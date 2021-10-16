@@ -36,8 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.istiaksaif.medops.Model.User;
 import com.istiaksaif.medops.R;
+
+import java.util.HashMap;
 
 
 public class LogInActivity extends AppCompatActivity {
@@ -165,6 +168,16 @@ public class LogInActivity extends AppCompatActivity {
     private void checkUserInfo() {
         showProgress();
         FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(!task.isSuccessful()){
+                    return;
+                }
+                String token = task.getResult();
+                databaseReference.child(user.getUid()).child("token").setValue(token);
+            }
+        });
         Query query = databaseReference.child(user.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -181,10 +194,19 @@ public class LogInActivity extends AppCompatActivity {
                         finish();
                     }
                     if (snapshot.child("isUser").getValue(String.class).equals("Doctor")) {
-                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
-                        startActivity(intent);
-                        progressDialog.dismiss();
-                        finish();
+                        if (user.isEmailVerified()){
+                            HashMap<String, Object> result = new HashMap<>();
+                            result.put("verifyStatus", "verified");
+                            databaseReference.child(user.getUid()).updateChildren(result);
+                            Intent intent = new Intent(LogInActivity.this, DoctorHomeActivity.class);
+                            startActivity(intent);
+                            progressDialog.dismiss();
+                            finish();
+                        }else {
+                            user.sendEmailVerification();
+                            Toast.makeText(LogInActivity.this,"Check your email to verify your account",Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
                     }
                     if (snapshot.child("isUser").getValue(String.class).equals("Nurse")) {
                         Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
