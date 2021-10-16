@@ -1,6 +1,7 @@
 package com.istiaksaif.medops.Fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,15 +15,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.istiaksaif.medops.Activity.RegistrationActivity;
+import com.istiaksaif.medops.Activity.UserHomeActivity;
+import com.istiaksaif.medops.Model.User;
 import com.istiaksaif.medops.R;
 
 import java.util.HashMap;
@@ -36,12 +43,16 @@ public class AdminHomeFragment extends Fragment {
 
     private DatabaseReference doctorDatabaseRef;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private String uid = user.getUid();
+//    private String uid = user.getUid();
+
+    private FirebaseAuth firebaseAuth;
+
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        doctorDatabaseRef = FirebaseDatabase.getInstance().getReference("Doctors");
+        doctorDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+        firebaseAuth = FirebaseAuth.getInstance();
 
         fullName = view.findViewById(R.id.name);
         nid = view.findViewById(R.id.nid);
@@ -93,37 +104,49 @@ public class AdminHomeFragment extends Fragment {
             Toast.makeText(getActivity(), "please enter BMDCID", Toast.LENGTH_SHORT).show();
             return;
         }
+        firebaseAuth.createUserWithEmailAndPassword(Email,BMDCID).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
 
-        String doctorId = doctorDatabaseRef.child(uid).push().getKey();
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("doctorName", FullName);
-        result.put("nid", NID);
-        result.put("bmdcID", BMDCID);
-        result.put("email", Email);
-        result.put("isUser", USERTYPE);
-        result.put("doctorId",doctorId);
-        result.put("image","https://firebasestorage.googleapis.com/v0/b/medops-covid19-detection.appspot.com/o/doctor.jpg?alt=media&token=8d6bbcc9-6afe-418f-8758-e3cfe2278437");
-        result.put("status","");
-
-
-        doctorDatabaseRef.child(doctorId).updateChildren(result)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        fullName.setText("");
-                        nid.setText("");
-                        userType.setText("");
-                        email.setText("");
-                        bmdcId.setText("");
-                        Toast.makeText(getActivity(),"Invitation Done",Toast.LENGTH_LONG).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "Error ", Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    FirebaseUser u = firebaseAuth.getCurrentUser();
+                    u.sendEmailVerification();
+                    String doctorId = u.getUid();
+                    HashMap<String, Object> result = new HashMap<>();
+                    result.put("doctorName", FullName);
+                    result.put("nid", NID);
+                    result.put("verifyStatus", "unverified");
+                    result.put("bmdcID", BMDCID);
+                    result.put("email", Email);
+                    result.put("isUser", USERTYPE);
+                    result.put("doctorId",doctorId);
+                    result.put("image","https://firebasestorage.googleapis.com/v0/b/medops-covid19-detection.appspot.com/o/doctor.jpg?alt=media&token=8d6bbcc9-6afe-418f-8758-e3cfe2278437");
+                    result.put("status","");
+
+
+                    doctorDatabaseRef.child(doctorId).updateChildren(result)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    fullName.setText("");
+                                    nid.setText("");
+                                    userType.setText("");
+                                    email.setText("");
+                                    bmdcId.setText("");
+                                    Toast.makeText(getActivity(),"Invitation Done",Toast.LENGTH_LONG).show();
+                                    FirebaseAuth.getInstance().signOut();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Error ", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "Authentication Failed "+task.getException().toString(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
     }
 
     @Override
