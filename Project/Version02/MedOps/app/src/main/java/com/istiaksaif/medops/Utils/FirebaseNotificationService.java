@@ -3,9 +3,11 @@ package com.istiaksaif.medops.Utils;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,11 +33,15 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
             if(type.equals(Constants.REMOTE_MSG_INVITATION)){
                 Intent intent = new Intent(getApplicationContext(), IncomingCallActivity.class);
                 intent.putExtra(Constants.REMOTE_MSG_MEETING_TYPE,remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_TYPE));
-//                intent.putExtra("first_name",remoteMessage.getData().get("first_name"));
-//                intent.putExtra("last_name",remoteMessage.getData().get("last_name"));
-//                intent.putExtra("email",remoteMessage.getData().get("email"));
+                intent.putExtra("userId",remoteMessage.getData().get("userId"));
+                intent.putExtra(Constants.REMOTE_MSG_INVITER_TOKEN,remoteMessage.getData().get(Constants.REMOTE_MSG_INVITER_TOKEN));
+                intent.putExtra(Constants.REMOTE_MSG_MEETING_ROOM,remoteMessage.getData().get(Constants.REMOTE_MSG_MEETING_ROOM));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }else if(type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)){
+                Intent intent = new Intent(Constants.REMOTE_MSG_INVITATION_RESPONSE);
+                intent.putExtra(Constants.REMOTE_MSG_INVITATION_RESPONSE,remoteMessage.getData().get(Constants.REMOTE_MSG_INVITATION_RESPONSE));
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }
         }
     }
@@ -45,20 +51,4 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         super.onNewToken(s);
     }
 
-    private void updateToken(String token){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(user.getUid()).child("token");
-        HashMap<String,Object> map = new HashMap<>();
-        map.put("token",token);
-        databaseReference.updateChildren(map);
-    }
-
-    private void createNormalNotification(String title,String message,String userId,String userImage){
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"1000");
-        builder.setContentTitle(title).setContentText(message).setSmallIcon(R.drawable.ic_launcher_foreground);
-
-        Intent intent = new Intent(this, OutGoingActivity.class);
-        intent.putExtra("userId",userId);
-    }
 }

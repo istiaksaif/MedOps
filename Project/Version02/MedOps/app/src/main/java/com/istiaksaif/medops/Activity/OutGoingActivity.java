@@ -2,8 +2,12 @@ package com.istiaksaif.medops.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -30,8 +34,13 @@ import com.istiaksaif.medops.network.ApiClient;
 import com.istiaksaif.medops.network.ApiService;
 import com.squareup.picasso.Picasso;
 
+import org.jitsi.meet.sdk.JitsiMeetActivity;
+import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,26 +53,20 @@ public class OutGoingActivity extends AppCompatActivity {
     private TextView Name;
     private ImageView image,layoutBgImg,endCall,micOnIcon,videoOnIcon;
 
-    private DatabaseReference databaseReference,databaseReference_repo;
+    private DatabaseReference databaseReference;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String uid = user.getUid();
     private Intent intent;
     private String doctorId,meetingType;
     private String inviterToken = null;
+    private String meetingRoom = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_out_going);
 
         preferenceManager =new PreferenceManager(getApplicationContext());
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if(task.isSuccessful() && task.getResult() !=null){
-                    inviterToken = task.getResult();
-                }
-            }
-        });
+
         intent = getIntent();
         doctorId = intent.getStringExtra("doctorId");
         meetingType = intent.getStringExtra("type");
@@ -76,9 +79,30 @@ public class OutGoingActivity extends AppCompatActivity {
         micOnIcon = findViewById(R.id.micOnIcon);
         videoOnIcon = findViewById(R.id.videoOnIcon);
 
-        endCall.setOnClickListener(view -> onBackPressed());
+        endCall.setOnClickListener(view -> {
+            databaseReference.child("users").child(doctorId).child("token").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    receiver_token = snapshot.getValue(String.class);
+                    cancelInvitation(receiver_token);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        });
         GetDataFromFirebase();
-        sendCallInvitation();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(task.isSuccessful() && task.getResult() != null){
+                    inviterToken = task.getResult();
+                    sendCallInvitation();
+                }
+            }
+        });
     }
 
     private void initiateMeeting(String meetingType, String receiverToken){
@@ -90,11 +114,11 @@ public class OutGoingActivity extends AppCompatActivity {
 
             data.put(Constants.REMOTE_MSG_TYPE,Constants.REMOTE_MSG_INVITATION);
             data.put(Constants.REMOTE_MSG_MEETING_TYPE,meetingType);
-            data.put("first_name",preferenceManager.getString("first_name"));
-            data.put("last_name",preferenceManager.getString("last_name"));
-            data.put("email",preferenceManager.getString("email"));
+            data.put("userId",uid);
             data.put(Constants.REMOTE_MSG_INVITER_TOKEN, inviterToken);
 
+            meetingRoom = Name.getText().toString();
+            data.put(Constants.REMOTE_MSG_MEETING_ROOM,meetingRoom);
             jsonObject.put(Constants.REMOTE_MSG_DATA,data);
             jsonObject.put(Constants.REMOTE_MSG_REG_IDS,token);
 
@@ -113,6 +137,9 @@ public class OutGoingActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     if(type.equals(Constants.REMOTE_MSG_INVITATION)){
                         Toast.makeText(OutGoingActivity.this,"Invitation Successfully",Toast.LENGTH_SHORT).show();
+                    }else if(type.equals(Constants.REMOTE_MSG_INVITATION_RESPONSE)) {
+                        Toast.makeText(OutGoingActivity.this,"Invitation Cancelled",Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 }else {
                     Toast.makeText(OutGoingActivity.this,response.message(),Toast.LENGTH_SHORT).show();
@@ -128,52 +155,8 @@ public class OutGoingActivity extends AppCompatActivity {
         });
     }
 
-    private void checkResponse() {
-        databaseReference_repo = FirebaseDatabase.getInstance().getReference("vcref").child(uid).child(doctorId);
-        databaseReference_repo.child("res").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if(snapshot.exists()){
-                    String key = snapshot.child("key").getValue().toString();
-                    String response = snapshot.child("response").getValue().toString();
-                    if(response.equals("yes")){
-                        joinmeeting(key);
-                        Toast.makeText(OutGoingActivity.this,"Call Accepted",Toast.LENGTH_SHORT).show();
-
-                    }else if(response.equals("no")){
-                        Toast.makeText(OutGoingActivity.this,"busy...",Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(OutGoingActivity.this,AppointmentDoctorActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }else {
-                    Toast.makeText(OutGoingActivity.this,"not responding",Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
-
-    private void joinmeeting(String key) {
-        try {
-//            JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions.Builder()
-//                    .setServerURL(new URL("https://meet.jit.si"))
-//                    .setRoom(key).setWelcomePageEnabled(false).build();
-//            JitsiMeetActivity.launch(OutGoingActivity.this,options);
-            finish();
-        }catch (Exception e){
-            Toast.makeText(this,e.getMessage(),Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void sendCallInvitation() {
-        databaseReference.child(doctorId).child("token").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("users").child(doctorId).child("token").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 receiver_token = snapshot.getValue(String.class);
@@ -194,6 +177,68 @@ public class OutGoingActivity extends AppCompatActivity {
 //                fcmNotifySender.SendNotify();
 //            }
 //        }, 1000);
+    }
+
+    private void cancelInvitation(String receiverToken){
+        try {
+            JSONArray token = new JSONArray();
+            token.put(receiverToken);
+            JSONObject jsonObject = new JSONObject();
+            JSONObject data = new JSONObject();
+
+            data.put(Constants.REMOTE_MSG_TYPE,Constants.REMOTE_MSG_INVITATION_RESPONSE);
+            data.put(Constants.REMOTE_MSG_INVITATION_RESPONSE,Constants.REMOTE_MSG_INVITATION_CANCEL);
+
+            jsonObject.put(Constants.REMOTE_MSG_DATA,data);
+            jsonObject.put(Constants.REMOTE_MSG_REG_IDS,token);
+
+            sendRemoteMessage(jsonObject.toString(),Constants.REMOTE_MSG_INVITATION_RESPONSE);
+
+        }catch (Exception e){
+
+        }
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String type = intent.getStringExtra(Constants.REMOTE_MSG_INVITATION_RESPONSE);
+            if(type != null){
+                if(type.equals(Constants.REMOTE_MSG_INVITATION_ACCEPTED)){
+                    try {
+                        URL serverUrl = new URL("https://meet.jit.si");
+                        JitsiMeetConferenceOptions conferenceOptions =
+                                new JitsiMeetConferenceOptions.Builder()
+                                .setServerURL(serverUrl).setWelcomePageEnabled(false)
+                                .setRoom(meetingRoom)
+                                .build();
+                        JitsiMeetActivity.launch(OutGoingActivity.this,conferenceOptions);
+                        finish();
+                    }catch (Exception e){
+                        Toast.makeText(OutGoingActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } else if(type.equals(Constants.REMOTE_MSG_INVITATION_REJECTED)){
+                    Toast.makeText(context,"Invitation Reject",Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        }
+    };
+
+    protected void onStart(){
+        super.onStart();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+            broadcastReceiver,new IntentFilter(Constants.REMOTE_MSG_INVITATION_RESPONSE)
+        );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                broadcastReceiver
+        );
     }
 
     private void GetDataFromFirebase() {

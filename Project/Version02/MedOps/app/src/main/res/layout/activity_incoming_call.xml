@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:background="@color/green_white"
     tools:context=".Activity.IncomingCallActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layoutBgImg"
+        android:scaleType="centerCrop"/>
     <RelativeLayout
         android:id="@+id/imageLayout"
         android:layout_width="match_parent"
@@ -68,12 +73,14 @@
         android:layout_marginBottom="55dp"
         android:layout_centerInParent="true">
         <ImageView
+            android:id="@+id/answerCall"
             android:layout_width="50sp"
             android:layout_height="40sp"
             android:src="@drawable/ic_answercall"
             android:layout_marginStart="20sp"
             android:layout_marginEnd="20sp"/>
         <ImageView
+            android:id="@+id/rejectCall"
             android:layout_width="50sp"
             android:layout_height="40sp"
             android:src="@drawable/ic_rejectcall"

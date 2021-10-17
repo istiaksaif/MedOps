@@ -134,7 +134,7 @@ public class AppointmentDoctorActivity extends AppCompatActivity {
                         drName.setText(snapshot.child("doctorName").getValue().toString());
                         String Image = snapshot.child("image").getValue().toString();
                         try {
-                            Picasso.get().load(Image).resize(320,320).into(drImage);
+                            Picasso.get().load(Image).into(drImage);
                         }catch (Exception e){
                             Picasso.get().load(R.drawable.dropdown).into(drImage);
                         }
