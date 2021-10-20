@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.istiaksaif.medops.R;
 import com.istiaksaif.medops.Utils.Constants;
-import com.istiaksaif.medops.Utils.FcmNotifySender;
 import com.istiaksaif.medops.Utils.PreferenceManager;
 import com.istiaksaif.medops.network.ApiClient;
 import com.istiaksaif.medops.network.ApiService;
@@ -40,7 +37,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
-import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -226,6 +222,7 @@ public class OutGoingActivity extends AppCompatActivity {
         }
     };
 
+    @Override
     protected void onStart(){
         super.onStart();
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(

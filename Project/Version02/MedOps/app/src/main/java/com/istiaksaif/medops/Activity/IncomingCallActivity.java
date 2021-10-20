@@ -157,14 +157,14 @@ public class IncomingCallActivity extends AppCompatActivity {
     }
 
     private void GetDataFromFirebase() {
-        Query query = databaseReference.child("users").orderByChild("doctorId").equalTo(userId);
+        Query query = databaseReference.child("users").orderByChild("userId").equalTo(userId);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
-                        Name.setText(snapshot.child("doctorName").getValue().toString());
-                        String Image = snapshot.child("image").getValue().toString();
+                        Name.setText(snapshot.child("name").getValue().toString());
+                        String Image = snapshot.child("imageUrl").getValue().toString();
                         try {
                             Picasso.get().load(Image).resize(320,320).into(image);
                             Picasso.get().load(Image).into(layoutBgImg);
