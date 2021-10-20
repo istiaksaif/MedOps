@@ -37,8 +37,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.istiaksaif.medops.Activity.AddMoneyActivity;
 import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
 import com.istiaksaif.medops.R;
+import com.istiaksaif.medops.Utils.AgeCalculator;
 import com.istiaksaif.medops.Utils.ImageGetHelper;
 import com.squareup.picasso.Picasso;
 
@@ -52,7 +54,7 @@ public class ProfileFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
     private ImageView logoutButton,imageView;
-    private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup,Height,Weight,Age,editAddress,editEmail,editPhone,userAddress;
+    private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup,Height,Weight,Age,editAddress,balanceTk,editPhone,userAddress,addMoney;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private Uri imageUri;
@@ -62,12 +64,16 @@ public class ProfileFragment extends Fragment {
 
     private String profilePhoto;
     private GoogleSignInClient googleSignInClient;
+    private AgeCalculator age = null;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         getImageFunction = new ImageGetHelper(this,null);
+
+        age=new AgeCalculator();
+        age.getCurrentDate();
 
         logoutButton = view.findViewById(R.id.logout);
         imageView = view.findViewById(R.id.profileimage);
@@ -82,9 +88,18 @@ public class ProfileFragment extends Fragment {
         nid = view.findViewById(R.id.nid);
         personalinfo = view.findViewById(R.id.personalinfo);
         editAddress = view.findViewById(R.id.editaddress);
-        editEmail = view.findViewById(R.id.editemail);
+        balanceTk = view.findViewById(R.id.balanceTk);
         editPhone = view.findViewById(R.id.editphone);
         userAddress = view.findViewById(R.id.address);
+        addMoney = view.findViewById(R.id.addmoney);
+
+        addMoney.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AddMoneyActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         progressDialog = new ProgressDialog(getActivity());
@@ -102,12 +117,24 @@ public class ProfileFragment extends Fragment {
                     String blood = "Blood Group :  "+dataSnapshot.child("bloodgroup").getValue();
                     String height = "Height :  "+dataSnapshot.child("height").getValue()+" cm";
                     String weight = "Weight :  "+dataSnapshot.child("weight").getValue()+" kg";
-                    String age = "Age :  "+dataSnapshot.child("age").getValue();
                     String retriveEmail = "   "+dataSnapshot.child("email").getValue();
                     String img = ""+dataSnapshot.child("imageUrl").getValue();
                     String receivephone = "  "+dataSnapshot.child("phone").getValue();
                     String receivenid = "NID :  "+dataSnapshot.child("nid").getValue();
-                    String address = "         "+dataSnapshot.child("address").getValue();
+                    String address = "          "+dataSnapshot.child("address").getValue();
+                    String balancetk = " "+dataSnapshot.child("balanceTk").getValue()+" ";
+
+                    String d = ""+dataSnapshot.child("dob").getValue();
+
+                    String str[] = d.split("/");
+                    int dayOfMonth = Integer.parseInt(str[0]);
+                    int month = Integer.parseInt(str[1]);
+                    int year = Integer.parseInt(str[2]);
+                    age.setDateOfBirth(year, month, dayOfMonth);
+                    age.calcualteYear();
+                    age.calcualteMonth();
+                    age.calcualteDay();
+                    String age1 = "Age :  "+age.getResult();
 
                     fullName.setText(name);
                     DOB.setText(dob);
@@ -115,10 +142,11 @@ public class ProfileFragment extends Fragment {
                     email.setText(retriveEmail);
                     phone.setText(receivephone);
                     nid.setText(receivenid);
-                    Age.setText(age);
+                    Age.setText(age1);
                     Height.setText(height);
                     Weight.setText(weight);
                     userAddress.setText(address);
+                    balanceTk.setText(balancetk);
 
                     try {
                         Picasso.get().load(img).resize(320,320).into(imageView);
@@ -157,13 +185,13 @@ public class ProfileFragment extends Fragment {
                 showMoreUpdating("address");
             }
         });
-        editEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.setMessage("Update Email");
-                showMoreUpdating("email");
-            }
-        });
+//        editEmail.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                progressDialog.setMessage("Update Email");
+//                showMoreUpdating("email");
+//            }
+//        });
         editPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
