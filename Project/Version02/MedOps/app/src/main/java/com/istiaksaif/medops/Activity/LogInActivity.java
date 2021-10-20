@@ -286,7 +286,7 @@ public class LogInActivity extends AppCompatActivity {
         String pname = user.getDisplayName();
         String pEmail = user.getEmail();
         String Status = "";
-        User userhelp = new User(pname,pEmail,null,"User","","","","","",user.getUid(),Status);
+        User userhelp = new User(pname,pEmail,null,"User","","","","","",user.getUid(),Status,"0");
         databaseReference.child(mAuth.getCurrentUser().getUid()).setValue(userhelp);
         updateUI(user);
     }

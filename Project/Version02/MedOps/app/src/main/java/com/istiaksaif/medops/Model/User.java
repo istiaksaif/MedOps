@@ -4,12 +4,12 @@ package com.istiaksaif.medops.Model;
  */
 
 public class User {
-    String name,email,phone,password,dob,bloodgroup,isUser,imageUrl,nid,userId,status;
+    String name,email,phone,password,dob,bloodgroup,isUser,imageUrl,nid,userId,status,balanceTk;
 
     public User() {
     }
 
-    public User(String name, String email, String password, String isUser, String phone, String dob, String bloodgroup, String imageUrl, String nid, String userId, String status) {
+    public User(String name, String email, String password, String isUser, String phone, String dob, String bloodgroup, String imageUrl, String nid, String userId, String status,String balanceTk) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -21,6 +21,7 @@ public class User {
         this.nid = nid;
         this.userId = userId;
         this.status = status;
+        this.balanceTk = balanceTk;
     }
 
 
@@ -110,5 +111,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getBalanceTk() {
+        return balanceTk;
+    }
+
+    public void setBalanceTk(String balanceTk) {
+        this.balanceTk = balanceTk;
     }
 }

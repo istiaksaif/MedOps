@@ -122,7 +122,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            User userhelp = new User(FullName,Email,null,"User","","","","",NID,uid,"offline");
+                            User userhelp = new User(FullName,Email,null,"User","","","","",NID,uid,"offline","0");
                             databaseReference.child(uid).setValue(userhelp);
                             Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegistrationActivity.this, UserHomeActivity.class);
