@@ -46,7 +46,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
     private String date;
     private Toolbar toolBar;
 
-
     private DatabaseReference databaseReference;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String uid = user.getUid();
@@ -55,8 +54,7 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_main);
-
+        setContentView(R.layout.activity_edit_personal_info_main);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
         getSupportActionBar().setTitle("");
@@ -119,11 +117,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
                     String Height = ""+dataSnapshot.child("height").getValue();
                     String Weight = ""+dataSnapshot.child("weight").getValue();
 
-//                    lname = findViewById(R.id.layoutname);
-//                    lblood = findViewById(R.id.bloodgrouplayout);
-//                    lnid = findViewById(R.id.layoutnid);
-//                    lheight = findViewById(R.id.layoutheight);
-//                    lweight = findViewById(R.id.layoutweight);
                     fullName.setText(name);
                     dateOfBirth.setText(dob);
                     bloodGroup.setText(blood);
@@ -147,7 +140,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         String BloodGroup = bloodGroup.getText().toString();
         String Height = height.getText().toString();
         String Weight = weight.getText().toString();
-//        String Age = age.getText().toString();
 
         if (TextUtils.isEmpty(FullName)){
             Toast.makeText(EditPersonalInfoActivity.this, "please enter your Name", Toast.LENGTH_SHORT).show();
@@ -176,7 +168,6 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         result.put("nid", NID);
         result.put("bloodgroup", BloodGroup);
         result.put("dob", DateOfBirth);
-//        result.put("age", Age);
         result.put("height", Height);
         result.put("weight", Weight);
 
