@@ -21,4 +21,7 @@
     <string name="popup_title">Please check the date and time and then confirm the appointment for your consult with doctor</string>
     <string name="fcmServerKey">AAAA19dyi8w:APA91bH-pSLyGfgbXcT0H4i8mZbOy-XUo7_R3ivw0fNEnv-xLnY6vuoZZhUHc5SRQeikTuHArY0H6o1rJj8tB7jHZE02EwQwzSCjEvAKlM-4UfsTEVNsXH-z0ALnqSbVsqN0TtFfg4w1</string>
     <string name="postUrl">https://fcm.googleapis.com/fcm/send</string>
+    <string name="bkash">01780772383(Send Money/Cash In) Minimum 10 TK</string>
+    <string name="nogod">01780772383(Send Money/Cash In) Minimum 10 TK</string>
+    <string name="verifyMsg">** you have to first send money or cash in after that you can verify payment. if you skip the following instruction your payment not successful</string>
 </resources>

@@ -113,12 +113,15 @@
             android:textColor="@color/dark"
             android:textSize="14sp"
             android:layout_marginStart="10sp"/>
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:orientation="horizontal">
             <androidx.cardview.widget.CardView
-                android:layout_width="100sp"
-                android:layout_height="70sp"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="80sp"
                 app:cardCornerRadius="10sp"
                 android:background="@color/white"
                 app:cardElevation="0sp"
@@ -142,7 +145,7 @@
                         android:layout_below="@+id/img1"
                         android:layout_centerInParent="true"
                         android:fontFamily="@font/eczar_medium"
-                        android:text=""
+                        android:text="500+"
                         android:textColor="@color/dark"
                         android:textSize="24sp"
                         android:layout_marginTop="-5sp"/>
@@ -158,8 +161,9 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
-                android:layout_width="100sp"
-                android:layout_height="70sp"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="80sp"
                 app:cardCornerRadius="10sp"
                 android:background="@color/white"
                 app:cardElevation="0sp"
@@ -207,8 +211,9 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
-                android:layout_width="100sp"
-                android:layout_height="70sp"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="80sp"
                 app:cardCornerRadius="10sp"
                 android:background="@color/white"
                 app:cardElevation="0sp"
@@ -271,13 +276,16 @@
                         android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-        </RelativeLayout>
-        <RelativeLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:orientation="horizontal">
             <androidx.cardview.widget.CardView
-                android:layout_width="100sp"
-                android:layout_height="70sp"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="80sp"
                 app:cardCornerRadius="10sp"
                 android:background="@color/white"
                 app:cardElevation="0sp"
@@ -319,8 +327,9 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
-                android:layout_width="100sp"
-                android:layout_height="70sp"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="80sp"
                 app:cardCornerRadius="10sp"
                 android:background="@color/white"
                 app:cardElevation="0sp"
@@ -368,8 +377,9 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
-                android:layout_width="100sp"
-                android:layout_height="70sp"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="80sp"
                 app:cardCornerRadius="10sp"
                 android:background="@color/white"
                 app:cardElevation="0sp"
@@ -385,6 +395,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:paddingTop="10sp"
                         android:fontFamily="@font/poppins_medium"
                         android:text="Sat - Mon, Fri"
                         android:textColor="@color/dark"
@@ -400,7 +411,7 @@
                         android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
-        </RelativeLayout>
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
