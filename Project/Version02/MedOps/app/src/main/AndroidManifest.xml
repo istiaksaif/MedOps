@@ -17,36 +17,40 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MedOps">
         <activity
+            android:name=".Activity.AddMoneyActivity"
+            android:exported="true" />
+        <activity
             android:name=".Activity.OutGoingActivity"
             android:exported="true"
-            android:theme="@style/Theme.statusBarTransparent"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.statusBarTransparent" />
         <activity
             android:name=".Activity.IncomingCallActivity"
             android:exported="true"
-            android:theme="@style/Theme.statusBarTransparent"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.statusBarTransparent" />
         <activity
             android:name=".Activity.DoctorHomeActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.AppointmentDoctorActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.statusBarTransparent"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activity.QAActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.statusBarTransparent"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activity.AskQusActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Activity.AskQusActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".Activity.LogInActivity"
-            android:theme="@style/Theme.statusBarTransparent"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.statusBarTransparent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,16 +59,20 @@
         </activity>
         <activity
             android:name=".Activity.RegistrationActivity"
-            android:theme="@style/Theme.statusBarTransparent"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activity.checkActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activity.UserHomeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activity.EditPersonalInfoActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Activity.AdminManagerHomeActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.statusBarTransparent" />
+        <activity
+            android:name=".Activity.checkActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.UserHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.EditPersonalInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activity.AdminManagerHomeActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -79,11 +87,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <service android:name=".Utils.FirebaseNotificationService"
+
+        <service
+            android:name=".Utils.FirebaseNotificationService"
             android:exported="false"
             tools:ignore="MissingClass">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>
