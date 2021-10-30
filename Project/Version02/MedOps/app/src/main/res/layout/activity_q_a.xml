@@ -4,17 +4,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootlayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.QAActivity">
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapstoolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/white"
@@ -130,7 +127,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/nsv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"
@@ -146,7 +142,6 @@
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>
     <RelativeLayout
-        android:id="@+id/messagepart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"

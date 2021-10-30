@@ -31,4 +31,9 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
+    <style name="NumberPickerCustomText">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">@font/eczar_semibold</item>
+        <item name="colorControlNormal">@color/dark_blue</item>
+    </style>
 </resources>

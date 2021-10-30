@@ -31,43 +31,62 @@
     </RelativeLayout>
     <TextView
         android:id="@+id/date"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_semibold"
-        android:gravity="center"
-        android:text="September 19"
+        android:layout_gravity="center_horizontal"
+        android:text=""
         android:textColor="@color/dark_blue"
         android:textSize="16sp"
-        android:padding="8sp"/>
-    <LinearLayout
+        android:padding="8sp"
+        android:drawableEnd="@drawable/ic_backarrow"/>
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/time_hour"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/time_picker_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/eczar_semibold"
-            android:gravity="center"
-            android:text="19"
-            android:background="@drawable/rectangle_14"
-            android:textColor="@color/dark_blue"
-            android:textSize="28sp"
-            android:padding="8sp"
-            android:layout_marginEnd="15sp"/>
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true">
+            <NumberPicker
+                android:id="@+id/hourpicker"
+                android:layout_width="wrap_content"
+                android:layout_height="120sp"
+                android:scaleY=".75"
+                android:theme="@style/NumberPickerCustomText"
+                android:background="@drawable/rectangle_14"
+                android:layout_marginEnd="15sp"/>
+            <NumberPicker
+                android:id="@+id/minpicker"
+                android:layout_width="wrap_content"
+                android:layout_height="120sp"
+                android:scaleY=".75"
+                android:theme="@style/NumberPickerCustomText"
+                android:background="@drawable/rectangle_14"
+                />
+        </LinearLayout>
         <TextView
-            android:id="@+id/time_min"
+            android:id="@+id/available_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rectangle_14"
-            android:fontFamily="@font/eczar_semibold"
-            android:gravity="center"
-            android:padding="8sp"
-            android:text="45"
+            android:fontFamily="@font/poppins"
+            android:padding="5sp"
+            android:layout_marginStart="10sp"
+            android:text="@string/idealTime"
             android:textColor="@color/dark_blue"
-            android:textSize="28sp" />
-    </LinearLayout>
+            android:textSize="10sp"
+            android:layout_toEndOf="@+id/time_picker_layout"
+            android:layout_alignBottom="@+id/time_picker_layout"/>
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/minstore"
+        android:layout_width="0sp"
+        android:layout_height="0sp"/>
+    <TextView
+        android:id="@+id/hourstore"
+        android:layout_width="0sp"
+        android:layout_height="0sp"/>
     <LinearLayout
         android:id="@+id/confirm_appoin_button"
         android:layout_width="wrap_content"

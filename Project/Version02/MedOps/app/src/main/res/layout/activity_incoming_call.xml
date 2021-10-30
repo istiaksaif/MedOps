@@ -17,12 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50sp"
         android:gravity="center">
-        <include
-            android:id="@+id/image"
-            layout="@layout/roundimage"/>
+        <include layout="@layout/roundimage"/>
     </RelativeLayout>
     <TextView
-        android:id="@+id/calltype"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="calling"
@@ -50,7 +47,6 @@
             android:padding="15sp"
             android:textColor="@color/dark"/>
         <TextView
-            android:id="@+id/calltime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10.24"

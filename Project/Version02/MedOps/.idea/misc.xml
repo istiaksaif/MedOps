@@ -15,11 +15,14 @@
         <entry key="app/src/main/res/drawable/ic_fav.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/ic_volume.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/imageshadow.xml" value="0.27870370370370373" />
+        <entry key="app/src/main/res/drawable/leftarrow.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/my_asset.xml" value="0.34739583333333335" />
         <entry key="app/src/main/res/drawable/rectangle_12.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/rectangle_14.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/rectangle_3.xml" value="0.27870370370370373" />
+        <entry key="app/src/main/res/drawable/rectangle_33.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/rectangle_confirm.xml" value="0.27870370370370373" />
+        <entry key="app/src/main/res/drawable/rectangle_confirm1.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/video_icon.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/layout/activity_add_money.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_ask_qus.xml" value="0.1584258324924319" />
@@ -32,11 +35,13 @@
         <entry key="app/src/main/res/layout/activity_q_a.xml" value="0.1584258324924319" />
         <entry key="app/src/main/res/layout/activity_registation.xml" value="0.3170289855072464" />
         <entry key="app/src/main/res/layout/activity_user_home.xml" value="0.1584258324924319" />
-        <entry key="app/src/main/res/layout/appoinment_popup.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/appoinment_popup.xml" value="0.3080260303687636" />
         <entry key="app/src/main/res/layout/fragment_doctors.xml" value="0.1584258324924319" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_user_home.xml" value="0.1379980563654033" />
         <entry key="app/src/main/res/layout/popup.xml" value="0.1584258324924319" />
         <entry key="app/src/main/res/layout/roundimage.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/timecard.xml" value="0.5" />
         <entry key="app/src/main/res/layout/usertype_item.xml" value="0.1" />
       </map>
     </option>
