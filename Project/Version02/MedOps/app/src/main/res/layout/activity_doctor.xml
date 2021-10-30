@@ -4,17 +4,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootlayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.AppointmentDoctorActivity">
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0sp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapstoolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/white"
@@ -94,7 +91,6 @@
         android:layout_marginBottom="48sp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nsv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
@@ -127,7 +123,6 @@
                 app:cardElevation="0sp"
                 android:layout_margin="10sp">
                 <RelativeLayout
-                    android:id="@+id/check"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/rectangle_12"
@@ -139,7 +134,6 @@
                         android:src="@drawable/ic_examination"
                         android:layout_centerHorizontal="true"/>
                     <TextView
-                        android:id="@+id/patientsnum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/img1"
@@ -180,7 +174,6 @@
                         android:orientation="horizontal"
                         android:gravity="center">
                         <TextView
-                            android:id="@+id/experienceyr"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -231,7 +224,6 @@
                         android:layout_marginTop="5sp"
                         android:gravity="center">
                         <TextView
-                            android:id="@+id/starttime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/eczar_medium"
@@ -239,7 +231,6 @@
                             android:textColor="@color/dark"
                             android:textSize="24sp" />
                         <TextView
-                            android:id="@+id/timeformate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins"
@@ -248,7 +239,6 @@
                             android:textSize="12sp"
                             android:layout_gravity="center"/>
                         <TextView
-                            android:id="@+id/endtime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/eczar_medium"
@@ -256,7 +246,6 @@
                             android:textColor="@color/dark"
                             android:textSize="24sp"/>
                         <TextView
-                            android:id="@+id/timeformate1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins"
@@ -302,7 +291,6 @@
                         android:layout_marginTop="5sp"
                         android:gravity="center">
                         <TextView
-                            android:id="@+id/rating"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/eczar_medium"
@@ -351,7 +339,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:fontFamily="@font/eczar_medium"
-                            android:text="200"
+                            android:text=""
                             android:textColor="@color/dark"
                             android:textSize="24sp"
                             android:layout_marginTop="5sp"/>
@@ -391,7 +379,6 @@
                     android:background="@drawable/rectangle_12"
                     android:padding="5sp">
                     <TextView
-                        android:id="@+id/num6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -432,11 +419,23 @@
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
     </LinearLayout>
+    <TextView
+        android:id="@+id/sufficient_balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:text="@string/sufficient_balance"
+        android:textColor="@color/pink"
+        android:textSize="12sp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="50sp"
+        android:visibility="gone"
+        android:gravity="center"/>
     <RelativeLayout
-        android:id="@+id/messagepart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -444,6 +443,7 @@
             android:orientation="horizontal"
             android:gravity="bottom">
             <LinearLayout
+                android:id="@+id/takeapponbtn"
                 android:layout_width="0sp"
                 android:layout_height="match_parent"
                 android:layout_weight=".5"
@@ -451,7 +451,6 @@
                 android:gravity="center"
                 android:background="@drawable/rectangle_3">
                 <TextView
-                    android:id="@+id/takeapponbtn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
