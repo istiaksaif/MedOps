@@ -79,7 +79,6 @@
                     android:textSize="14sp"
                     android:fontFamily="@font/poppins_light"/>
                 <TextView
-                    android:id="@+id/swapmoney"
                     android:layout_width="0sp"
                     android:layout_weight=".5"
                     android:layout_height="wrap_content"
@@ -238,7 +237,6 @@
                 android:layout_marginTop="10sp"
                 android:layout_marginBottom="10sp">
                 <TextView
-                    android:id="@+id/editemail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="10sp"

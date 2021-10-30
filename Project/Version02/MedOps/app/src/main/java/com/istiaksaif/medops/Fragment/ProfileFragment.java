@@ -185,13 +185,6 @@ public class ProfileFragment extends Fragment {
                 showMoreUpdating("address");
             }
         });
-//        editEmail.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                progressDialog.setMessage("Update Email");
-//                showMoreUpdating("email");
-//            }
-//        });
         editPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
