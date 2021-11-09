@@ -64,7 +64,7 @@ public class OutGoingActivity extends AppCompatActivity {
         preferenceManager =new PreferenceManager(getApplicationContext());
 
         intent = getIntent();
-        doctorId = intent.getStringExtra("doctorId");
+        doctorId = intent.getStringExtra("userId");
         meetingType = intent.getStringExtra("type");
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -164,15 +164,6 @@ public class OutGoingActivity extends AppCompatActivity {
 
             }
         });
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                FcmNotifySender fcmNotifySender = new FcmNotifySender(receiver_token,"MedOps",uid,
-//                        getApplicationContext(),OutGoingActivity.this);
-//                fcmNotifySender.SendNotify();
-//            }
-//        }, 1000);
     }
 
     private void cancelInvitation(String receiverToken){
@@ -239,16 +230,16 @@ public class OutGoingActivity extends AppCompatActivity {
     }
 
     private void GetDataFromFirebase() {
-        Query query = databaseReference.child("users").orderByChild("doctorId").equalTo(doctorId);
+        Query query = databaseReference.child("users").orderByChild("userId").equalTo(doctorId);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
-                        Name.setText(snapshot.child("doctorName").getValue().toString());
-                        String Image = snapshot.child("image").getValue().toString();
+                        Name.setText(snapshot.child("name").getValue().toString());
+                        String Image = snapshot.child("imageUrl").getValue().toString();
                         try {
-                            Picasso.get().load(Image).resize(320,320).into(image);
+                            Picasso.get().load(Image).into(image);
                             Picasso.get().load(Image).into(layoutBgImg);
                         }catch (Exception e){
                             Picasso.get().load(R.drawable.dropdown).into(image);
