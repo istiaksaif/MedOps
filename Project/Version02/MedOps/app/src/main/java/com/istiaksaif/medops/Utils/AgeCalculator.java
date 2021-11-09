@@ -69,7 +69,7 @@ public class AgeCalculator {
 
     public String getResult()
     {
-        return resYear + " yrs";
+        return resYear+"";
     }
     public String getCurrentDateOfMonthName()
     {

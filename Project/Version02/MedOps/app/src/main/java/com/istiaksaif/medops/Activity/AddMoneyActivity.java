@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 public class AddMoneyActivity extends AppCompatActivity {
 
-    private TextInputEditText amount,number;
+    private TextInputEditText amount,number,trxId;
     private MaterialAutoCompleteTextView accountType;
     private Button verifyButton;
     private Toolbar toolBar;
@@ -64,6 +64,7 @@ public class AddMoneyActivity extends AppCompatActivity {
 
         amount = findViewById(R.id.tk);
         number = findViewById(R.id.number);
+        trxId = findViewById(R.id.trxId);
         accountType = findViewById(R.id.accountType);
         TextInputLayout textInputLayoutAccount = findViewById(R.id.accountTypeLayout);
         String []optionUniName = {"Bkash","Nagad"};
@@ -78,6 +79,7 @@ public class AddMoneyActivity extends AppCompatActivity {
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("amountTk", amount.getText().toString());
                 result.put("accountNumber", number.getText().toString());
+                result.put("trxId", trxId.getText().toString());
                 result.put("accountType", accountType.getText().toString());
                 result.put("userId", uid);
 

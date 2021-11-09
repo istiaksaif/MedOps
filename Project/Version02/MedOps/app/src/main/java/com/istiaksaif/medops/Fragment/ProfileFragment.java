@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.istiaksaif.medops.Activity.AddMoneyActivity;
 import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
+import com.istiaksaif.medops.Activity.EditProfessionalInfoActivity;
 import com.istiaksaif.medops.R;
 import com.istiaksaif.medops.Utils.AgeCalculator;
 import com.istiaksaif.medops.Utils.ImageGetHelper;
@@ -54,7 +55,10 @@ public class ProfileFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
     private ImageView logoutButton,imageView;
-    private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup,Height,Weight,Age,editAddress,balanceTk,editPhone,userAddress,addMoney;
+    private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup,Height,Weight,Age,
+            editAddress,balanceTk,editPhone,userAddress,addMoney;
+    private LinearLayout layout;
+    private TextView professionalInfo,designation,workingIn,workingExperience,BMDCId,consultHour,consultDays,consultFee;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private Uri imageUri;
@@ -92,6 +96,15 @@ public class ProfileFragment extends Fragment {
         editPhone = view.findViewById(R.id.editphone);
         userAddress = view.findViewById(R.id.address);
         addMoney = view.findViewById(R.id.addmoney);
+        layout = view.findViewById(R.id.professionallayout);
+        professionalInfo = view.findViewById(R.id.professionalinfo);
+        designation = view.findViewById(R.id.designation);
+        workingIn = view.findViewById(R.id.workingin);
+        workingExperience = view.findViewById(R.id.workingExperience);
+        BMDCId = view.findViewById(R.id.bmdcid);
+        consultHour = view.findViewById(R.id.consulthour);
+        consultDays = view.findViewById(R.id.consultdays);
+        consultFee = view.findViewById(R.id.consultfee);
 
         addMoney.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +113,6 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
 
         progressDialog = new ProgressDialog(getActivity());
 
@@ -126,23 +138,49 @@ public class ProfileFragment extends Fragment {
 
                     String d = ""+dataSnapshot.child("dob").getValue();
 
-                    String str[] = d.split("/");
-                    int dayOfMonth = Integer.parseInt(str[0]);
-                    int month = Integer.parseInt(str[1]);
-                    int year = Integer.parseInt(str[2]);
-                    age.setDateOfBirth(year, month, dayOfMonth);
-                    age.calcualteYear();
-                    age.calcualteMonth();
-                    age.calcualteDay();
-                    String age1 = "Age :  "+age.getResult();
+                    try {
+                        String str[] = d.split("/");
+                        int dayOfMonth = Integer.parseInt(str[0]);
+                        int month = Integer.parseInt(str[1]);
+                        int year = Integer.parseInt(str[2]);
+                        age.setDateOfBirth(year, month, dayOfMonth);
+                        age.calcualteYear();
+                        age.calcualteMonth();
+                        age.calcualteDay();
+                        String age1 = "Age :  " + age.getResult() + " yrs";
+                        Age.setText(age1);
+                    }catch (Exception e){
+                    }
+                    String userType = ""+dataSnapshot.child("isUser").getValue();
+                    if(userType.equals("Doctor")){
+                        layout.setVisibility(View.VISIBLE);
+                        designation.setText(" "+dataSnapshot.child("designation").getValue()+" ");
+                        workingIn.setText(" "+dataSnapshot.child("workingIn").getValue()+" ");
+                        String experience = ""+dataSnapshot.child("workingExperience").getValue();
+                        try {
+                            String str1[] = experience.split("/");
+                            int dayOfMonth1 = Integer.parseInt(str1[0]);
+                            int month1 = Integer.parseInt(str1[1]);
+                            int year1 = Integer.parseInt(str1[2]);
+                            age.setDateOfBirth(year1, month1, dayOfMonth1);
+                            age.calcualteYear();
+                            age.calcualteMonth();
+                            age.calcualteDay();
+                            workingExperience.setText(" Experience : "+age.getResult()+" yrs");
+                        }catch (Exception e){
 
+                        }
+                        BMDCId.setText(" BMDCID : "+dataSnapshot.child("bmdcID").getValue()+" ");
+                        consultHour.setText(" ConsultHour : "+dataSnapshot.child("consultHour").getValue()+" to "+dataSnapshot.child("consultHourTo").getValue());
+                        consultDays.setText(" ConsultDays : "+dataSnapshot.child("consultDays").getValue()+" ");
+                        consultFee.setText(" ConsultFee : "+dataSnapshot.child("consultFee").getValue()+" ");
+                    }
                     fullName.setText(name);
                     DOB.setText(dob);
                     BloodGroup.setText(blood);
                     email.setText(retriveEmail);
                     phone.setText(receivephone);
                     nid.setText(receivenid);
-                    Age.setText(age1);
                     Height.setText(height);
                     Weight.setText(weight);
                     userAddress.setText(address);
@@ -177,7 +215,13 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+        professionalInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditProfessionalInfoActivity.class);
+                startActivity(intent);
+            }
+        });
         editAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
