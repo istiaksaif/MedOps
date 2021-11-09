@@ -8,15 +8,22 @@
         <entry key="app/src/main/res/drawable/bg_round.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/bglog.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/bglog1.xml" value="0.3406537282941777" />
+        <entry key="app/src/main/res/drawable/bkash.xml" value="0.34739583333333335" />
         <entry key="app/src/main/res/drawable/buttonbackcard.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/buttonbg.xml" value="0.3406537282941777" />
         <entry key="app/src/main/res/drawable/calendar.xml" value="0.3406537282941777" />
+        <entry key="app/src/main/res/drawable/club_icon.xml" value="0.14722222222222223" />
         <entry key="app/src/main/res/drawable/ic_callend.xml" value="0.34739583333333335" />
+        <entry key="app/src/main/res/drawable/ic_chat.xml" value="0.34739583333333335" />
         <entry key="app/src/main/res/drawable/ic_fav.xml" value="0.3406537282941777" />
+        <entry key="app/src/main/res/drawable/ic_feedback.xml" value="0.34739583333333335" />
+        <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.34739583333333335" />
         <entry key="app/src/main/res/drawable/ic_volume.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/imageshadow.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/leftarrow.xml" value="0.3406537282941777" />
+        <entry key="app/src/main/res/drawable/logout.xml" value="0.14722222222222223" />
         <entry key="app/src/main/res/drawable/my_asset.xml" value="0.34739583333333335" />
+        <entry key="app/src/main/res/drawable/privacypolicy.xml" value="0.14722222222222223" />
         <entry key="app/src/main/res/drawable/rectangle_12.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/rectangle_14.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/drawable/rectangle_3.xml" value="0.27870370370370373" />
@@ -26,8 +33,10 @@
         <entry key="app/src/main/res/drawable/video_icon.xml" value="0.27870370370370373" />
         <entry key="app/src/main/res/layout/activity_add_money.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_ask_qus.xml" value="0.1584258324924319" />
-        <entry key="app/src/main/res/layout/activity_doctor.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_doctor.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_doctor_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_edit_personal_info_main.xml" value="0.3183876811594203" />
+        <entry key="app/src/main/res/layout/activity_edit_professional_info.xml" value="0.21367521367521367" />
         <entry key="app/src/main/res/layout/activity_incoming_call.xml" value="0.26296296296296295" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.13148148148148148" />
         <entry key="app/src/main/res/layout/activity_out_going.xml" value="0.25" />
@@ -36,12 +45,19 @@
         <entry key="app/src/main/res/layout/activity_registation.xml" value="0.3170289855072464" />
         <entry key="app/src/main/res/layout/activity_user_home.xml" value="0.1584258324924319" />
         <entry key="app/src/main/res/layout/appoinment_popup.xml" value="0.3080260303687636" />
+        <entry key="app/src/main/res/layout/comunityqncard.xml" value="0.28940217391304346" />
+        <entry key="app/src/main/res/layout/doctorcard.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/layout/drawerdialog.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_admin_home.xml" value="0.28940217391304346" />
+        <entry key="app/src/main/res/layout/fragment_community.xml" value="0.28940217391304346" />
         <entry key="app/src/main/res/layout/fragment_doctors.xml" value="0.1584258324924319" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_user_home.xml" value="0.1379980563654033" />
         <entry key="app/src/main/res/layout/popup.xml" value="0.1584258324924319" />
-        <entry key="app/src/main/res/layout/roundimage.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/progress_dialog.xml" value="0.28940217391304346" />
+        <entry key="app/src/main/res/layout/roundimage.xml" value="0.22" />
         <entry key="app/src/main/res/layout/timecard.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/usernid.xml" value="0.28940217391304346" />
         <entry key="app/src/main/res/layout/usertype_item.xml" value="0.1" />
       </map>
     </option>
