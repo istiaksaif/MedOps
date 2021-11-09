@@ -1,10 +1,13 @@
 package com.istiaksaif.medops.Activity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,15 +45,14 @@ public class UserHomeActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager tabviewPager;
     private Toolbar toolbar;
-    private AppBarLayout appBarLayout;
+
     private long backPressedTime;
     private DrawerLayout drawerLayout;
     private LottieAnimationView cross;
     private CardView cardView;
-    private LinearLayout createClub,logoutButton;
+    private LinearLayout logoutButton;
 
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    private TextView appVersion;
 
     private GoogleSignInClient googleSignInClient;
 
@@ -78,19 +80,6 @@ public class UserHomeActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(R.drawable.community_chat);
         tabLayout.getTabAt(2).setIcon(R.drawable.doctor);
 
-//        tabviewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
-//            @Override
-//            public void transformPage(@NonNull View page, float position) {
-//                page.setTranslationX(page.getWidth()* -position);
-//                if(position <= -1 || position >= 1){
-//                    page.setAlpha(0);
-//                }else if(position==0){
-//                    page.setAlpha(1);
-//                }else {
-//                    page.setAlpha(1-Math.abs(position));
-//                }
-//            }
-//        });
         //appDrawer
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -136,6 +125,18 @@ public class UserHomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        appVersion = findViewById(R.id.app_version);
+        PackageManager manager = getApplication().getPackageManager();
+        PackageInfo info = null;
+        try {
+            info = manager.getPackageInfo(
+                    getApplication().getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = info.versionName;
+        appVersion.setText("Version "+version);
     }
     @Override
     protected void onResume() {

@@ -49,10 +49,12 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String DocId = mdata.get(position).getDoctorId();
-        holder.doctorname.setText(mdata.get(position).getDoctorName());
-        holder.workHospital.setText(mdata.get(position).getHospital());
-        Glide.with(context).load(mdata.get(position).getImage()).placeholder(R.drawable.dropdown).into(holder.DoctorImage);
+        String DocId = mdata.get(position).getUserId();
+        holder.doctorname.setText(mdata.get(position).getName());
+        holder.workHospital.setText(mdata.get(position).getWorkingIn());
+        holder.doctorDegrees.setText(mdata.get(position).getDegrees());
+        holder.doctorDesignation.setText(mdata.get(position).getDesignation());
+        Glide.with(context).load(mdata.get(position).getImageUrl()).placeholder(R.drawable.dropdown).into(holder.DoctorImage);
 
         if(mdata.get(position).getStatus().equals("")){
             holder.appointmentButton.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +80,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, AppointmentDoctorActivity.class);
-                intent.putExtra("doctorId",DocId);
+                intent.putExtra("userId",DocId);
                 context.startActivity(intent);
             }
         });
@@ -93,15 +95,15 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView DoctorImage;
-        TextView doctorname,appointmentButton,doctorlevel,workHospital,doctorPosition;
+        TextView doctorname,appointmentButton,doctorDegrees,workHospital,doctorDesignation;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             DoctorImage = (ImageView) itemView.findViewById(R.id.drimage);
             doctorname = (TextView) itemView.findViewById(R.id.drname);
-            doctorlevel = (TextView) itemView.findViewById(R.id.dr);
+            doctorDegrees = (TextView) itemView.findViewById(R.id.dr);
             workHospital = (TextView) itemView.findViewById(R.id.workhospital);
-            doctorPosition = (TextView) itemView.findViewById(R.id.drposition);
+            doctorDesignation = (TextView) itemView.findViewById(R.id.drposition);
 
             appointmentButton = (TextView) itemView.findViewById(R.id.appointmentbtn);
         }

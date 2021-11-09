@@ -61,9 +61,12 @@ public class DoctorsListFragment extends Fragment {
                     try {
                         if (snapshot.child("verifyStatus").getValue().toString().equals("verified")){
                             DoctorItem doctorItem = new DoctorItem();
-                            doctorItem.setDoctorName(snapshot.child("doctorName").getValue().toString());
-                            doctorItem.setImage(snapshot.child("image").getValue().toString());
-                            doctorItem.setDoctorId(snapshot.child("doctorId").getValue().toString());
+                            doctorItem.setName(snapshot.child("name").getValue().toString());
+                            doctorItem.setImageUrl(snapshot.child("imageUrl").getValue().toString());
+                            doctorItem.setUserId(snapshot.child("userId").getValue().toString());
+                            doctorItem.setWorkingIn(snapshot.child("workingIn").getValue().toString());
+                            doctorItem.setDegrees(snapshot.child("degrees").getValue().toString());
+                            doctorItem.setDesignation(snapshot.child("designation").getValue().toString());
                             doctorItem.setStatus(snapshot.child("status").getValue().toString());
 
                             doctorItemList.add(doctorItem);
