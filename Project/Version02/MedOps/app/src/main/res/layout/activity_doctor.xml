@@ -16,10 +16,12 @@
             android:layout_height="wrap_content"
             app:contentScrim="@color/white"
             app:expandedTitleGravity="top"
-            app:layout_scrollFlags="enterAlwaysCollapsed">
+            app:titleEnabled="false"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:layout_collapseMode="parallax">
                 <ImageView
                     android:id="@+id/drimage"
                     android:layout_width="match_parent"
@@ -32,14 +34,7 @@
                     android:adjustViewBounds="true"
                     android:src="@drawable/imageshadow"
                     android:layout_alignParentBottom="true"/>
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/drtoolbar"
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="20sp"
-                    android:layout_height="50sp"
-                    app:layout_collapseMode="pin"
-                    android:background="@android:color/transparent"
-                    app:contentInsetLeft="0sp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,7 +63,7 @@
                             android:layout_marginStart="10sp"
                             android:layout_marginEnd="15sp"/>
                         <TextView
-                            android:id="@+id/studies"
+                            android:id="@+id/degrees"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:fontFamily="@font/poppins"
@@ -81,15 +76,23 @@
                     </RelativeLayout>
                 </LinearLayout>
             </RelativeLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/drtoolbar"
+                android:layout_width="match_parent"
+                android:layout_marginTop="20sp"
+                android:layout_height="50sp"
+                app:layout_collapseMode="pin"
+                android:background="@android:color/transparent"
+                app:contentInsetLeft="0sp"/>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white"
         android:layout_marginBottom="48sp"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,7 +104,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:text="SPECIALITIES"
+            android:textColor="@color/dark_blue"
+            android:textSize="12sp"
+            android:padding="10sp"/>
+        <TextView
+            android:id="@+id/designation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
@@ -174,11 +185,12 @@
                         android:orientation="horizontal"
                         android:gravity="center">
                         <TextView
+                            android:id="@+id/workingExperience"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:fontFamily="@font/eczar_medium"
-                            android:text="7"
+                            android:text=""
                             android:textColor="@color/dark"
                             android:textSize="24sp"
                             android:layout_marginTop="3sp"/>
@@ -187,7 +199,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:fontFamily="@font/poppins"
-                            android:text=" yr"
+                            android:text=" yrs"
                             android:textColor="@color/dark"
                             android:textSize="14sp"
                             android:layout_marginTop="3sp"/>
@@ -224,32 +236,36 @@
                         android:layout_marginTop="5sp"
                         android:gravity="center">
                         <TextView
+                            android:id="@+id/ch"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/eczar_medium"
-                            android:text="11"
+                            android:text=""
                             android:textColor="@color/dark"
                             android:textSize="24sp" />
                         <TextView
+                            android:id="@+id/consulthourstatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins"
-                            android:text="am-"
+                            android:text=""
                             android:textColor="@color/dark"
                             android:textSize="12sp"
                             android:layout_gravity="center"/>
                         <TextView
+                            android:id="@+id/cht"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/eczar_medium"
-                            android:text="6"
+                            android:text=""
                             android:textColor="@color/dark"
                             android:textSize="24sp"/>
                         <TextView
+                            android:id="@+id/consulthourtostatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins"
-                            android:text="pm"
+                            android:text=""
                             android:textColor="@color/dark"
                             android:textSize="12sp"
                             android:layout_gravity="center"/>
@@ -379,12 +395,13 @@
                     android:background="@drawable/rectangle_12"
                     android:padding="5sp">
                     <TextView
+                        android:id="@+id/consultDays"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:paddingTop="10sp"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Sat - Mon, Fri"
+                        android:text=""
                         android:textColor="@color/dark"
                         android:textSize="14sp"/>
                     <TextView
