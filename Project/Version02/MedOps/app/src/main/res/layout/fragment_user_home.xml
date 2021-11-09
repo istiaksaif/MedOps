@@ -69,9 +69,10 @@
                 android:orientation="vertical">
                 <ImageView
                     android:id="@+id/predictimg"
-                    android:layout_width="match_parent"
-                    android:layout_height="170sp"
-                    android:scaleType="center"/>
+                    android:layout_width="224sp"
+                    android:layout_height="224sp"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"/>
                 <TextView
                     android:id="@+id/predictbutton"
                     android:layout_width="match_parent"

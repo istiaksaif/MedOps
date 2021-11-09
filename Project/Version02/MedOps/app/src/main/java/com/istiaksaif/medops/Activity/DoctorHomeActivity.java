@@ -62,7 +62,7 @@ public class DoctorHomeActivity extends AppCompatActivity {
         TabViewPagerAdapter tabViewPagerAdapter = new TabViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         tabViewPagerAdapter.AddFragment(new ProfileFragment(),null);
         tabViewPagerAdapter.AddFragment(new CommunityFragment(),null);
-        tabViewPagerAdapter.AddFragment(new DoctorsListFragment(),null);
+        tabViewPagerAdapter.AddFragment(new UserHomeFragment(),null);
         tabviewPager.setAdapter(tabViewPagerAdapter);
         tabviewPager.setCurrentItem(2);
         tabLayout.setupWithViewPager(tabviewPager);
