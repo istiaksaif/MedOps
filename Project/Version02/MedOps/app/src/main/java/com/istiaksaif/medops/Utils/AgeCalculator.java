@@ -5,15 +5,22 @@ import java.util.Locale;
 
 public class AgeCalculator {
     private int startYear, startMonth, startDay, endYear, endMonth, endDay, resYear, resMonth, resDay;
-    private Calendar start, end;
+    private Calendar calendar;
+    private String dayName;
     public String getCurrentDate()
     {
-        end=Calendar.getInstance();
-        endYear=end.get(Calendar.YEAR);
-        endMonth=end.get(Calendar.MONTH);
+        calendar=Calendar.getInstance();
+        endYear=calendar.get(Calendar.YEAR);
+        endMonth=calendar.get(Calendar.MONTH);
         endMonth++;
-        endDay=end.get(Calendar.DAY_OF_MONTH);
+        endDay=calendar.get(Calendar.DAY_OF_MONTH);
         return endDay+":"+endMonth+":"+endYear;
+    }
+    public String getNameOfDay()
+    {
+        calendar=Calendar.getInstance();
+        dayName=calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.US);
+        return dayName;
     }
     public void setDateOfBirth(int sYear, int sMonth, int sDay)
     {
@@ -73,11 +80,11 @@ public class AgeCalculator {
     }
     public String getCurrentDateOfMonthName()
     {
-        end=Calendar.getInstance();
+        calendar=Calendar.getInstance();
         String monthname;
-        monthname = end.getDisplayName(Calendar.MONTH,Calendar.LONG, Locale.ENGLISH);
-        endYear=end.get(Calendar.YEAR);
-        endDay=end.get(Calendar.DAY_OF_MONTH);
+        monthname = calendar.getDisplayName(Calendar.MONTH,Calendar.LONG, Locale.ENGLISH);
+        endYear=calendar.get(Calendar.YEAR);
+        endDay=calendar.get(Calendar.DAY_OF_MONTH);
         return monthname+" "+endDay+", "+endYear;
     }
 }

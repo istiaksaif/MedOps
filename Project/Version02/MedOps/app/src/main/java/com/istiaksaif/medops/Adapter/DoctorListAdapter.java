@@ -57,21 +57,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
         Glide.with(context).load(mdata.get(position).getImageUrl()).placeholder(R.drawable.dropdown).into(holder.DoctorImage);
 
         if(mdata.get(position).getStatus().equals("")){
-            holder.appointmentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-                    bottomSheetDialog.setContentView(R.layout.appoinment_popup);
-                    bottomSheetDialog.setCanceledOnTouchOutside(false);
 
-                    bottomSheetDialog.show();
-//                    HashMap<String, Object> result = new HashMap<>();
-//                    result.put("userId", uid);
-//                    result.put("status", "pending");
-//                    databaseReference.child("Doctors").child(DocId).child("patientsList").child(uid).updateChildren(result);
-//                    holder.appointmentButton.setText("pending");
-                }
-            });
         }else if(mdata.get(position).getStatus().equals("confirm")){
             holder.appointmentButton.setVisibility(View.GONE);
         }

@@ -225,8 +225,7 @@ public class OutGoingActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
-                broadcastReceiver
-        );
+                broadcastReceiver);
     }
 
     private void GetDataFromFirebase() {

@@ -86,7 +86,7 @@
                 app:contentInsetLeft="0sp"/>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -435,7 +435,7 @@
             android:layout_marginStart="10sp"/>
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-    </LinearLayout>
+    </FrameLayout>
     <TextView
         android:id="@+id/sufficient_balance"
         android:layout_width="match_parent"
@@ -458,7 +458,8 @@
             android:layout_height="wrap_content"
             android:weightSum="1"
             android:orientation="horizontal"
-            android:gravity="bottom">
+            android:gravity="bottom"
+            android:background="@drawable/background">
             <LinearLayout
                 android:id="@+id/takeapponbtn"
                 android:layout_width="0sp"
