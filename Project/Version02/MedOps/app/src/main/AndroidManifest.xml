@@ -42,8 +42,7 @@
         <activity
             android:name=".Activity.AppointmentDoctorActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.statusBarTransparent"
-            android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/Theme.statusBarTransparent"/>
         <activity
             android:name=".Activity.QAActivity"
             android:screenOrientation="portrait"

@@ -23,4 +23,6 @@
     <string name="idealTime">an IDEAL time for you</string>
     <string name="timeUnavailable">Unfortunately, this time is not available</string>
     <string name="sufficient_balance">You do not have sufficient balance</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
