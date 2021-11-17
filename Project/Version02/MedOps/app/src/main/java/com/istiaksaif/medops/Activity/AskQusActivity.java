@@ -107,9 +107,9 @@ public class AskQusActivity extends AppCompatActivity {
                     databaseReference.child(quesId).updateChildren(resultimg).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            intent();
                             Toast.makeText(AskQusActivity.this, "Question Successful Submitted", Toast.LENGTH_SHORT).show();
                             pro.dismiss();
+                            finish();
                         }
                     });
                 }else
@@ -125,9 +125,9 @@ public class AskQusActivity extends AppCompatActivity {
                                     databaseReference.child(quesId).updateChildren(resultimg).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            intent();
                                             Toast.makeText(AskQusActivity.this, "Question Successful Submitted", Toast.LENGTH_SHORT).show();
                                             pro.dismiss();
+                                            finish();
                                         }
                                     });
                                 }
@@ -141,6 +141,7 @@ public class AskQusActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(AskQusActivity.this, "Uploading Failed !!", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     });
                 }
@@ -149,13 +150,9 @@ public class AskQusActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(AskQusActivity.this, "Uploading Failed !!", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
-    }
-
-    private void intent() {
-        Intent intent = new Intent(AskQusActivity.this, UserHomeActivity.class);
-        startActivity(intent);
     }
 
     @Override

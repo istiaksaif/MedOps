@@ -12,21 +12,58 @@
         app:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapstoolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/white"
             app:expandedTitleGravity="top"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            >
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/qaimage"
+            app:titleEnabled="false"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"/>
+                android:layout_height="wrap_content"
+                app:layout_collapseMode="parallax">
+                <ImageView
+                    android:id="@+id/qaimage"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:layout_marginTop="-30sp"
+                        android:layout_below="@+id/qaimage"
+                        android:background="@drawable/bglog1">
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/imgcard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="20dp"
+                            android:background="@color/white"
+                            app:cardElevation="0dp">
+                            <ImageView
+                                android:id="@+id/userimage"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@color/white_redis"
+                                android:scaleType="fitCenter"/>
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                            android:id="@+id/username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="14dp"
+                            android:fontFamily="@font/poppins"
+                            android:textColor="@color/dark"
+                            android:gravity="center"
+                            android:layout_toRightOf="@+id/imgcard"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"/>
+                    </RelativeLayout>
+            </RelativeLayout>
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/qatoolbar"
                 android:layout_width="match_parent"
@@ -35,57 +72,19 @@
                 app:layout_collapseMode="pin"
                 android:background="@android:color/transparent"
                 app:contentInsetLeft="0dp"/>
-        </RelativeLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="-35dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-0dp"
         android:layout_marginBottom="50dp"
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="20dp"
-            android:background="@color/white"
-            app:cardElevation="0dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp">
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/imgcard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="20dp"
-                        android:background="@color/white"
-                        app:cardElevation="0dp">
-                        <ImageView
-                            android:id="@+id/userimage"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@color/white_redis"
-                            android:scaleType="fitCenter"/>
-                    </androidx.cardview.widget.CardView>
-                    <TextView
-                        android:id="@+id/username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textSize="14dp"
-                        android:fontFamily="@font/poppins"
-                        android:textColor="@color/dark"
-                        android:gravity="center"
-                        android:layout_toRightOf="@+id/imgcard"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"/>
-                </RelativeLayout>
                 <TextView
                     android:id="@+id/ques"
                     android:layout_width="match_parent"
@@ -125,7 +124,7 @@
                         android:layout_alignBottom="@+id/qusdes"/>
                 </RelativeLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+<!--        </androidx.cardview.widget.CardView>-->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

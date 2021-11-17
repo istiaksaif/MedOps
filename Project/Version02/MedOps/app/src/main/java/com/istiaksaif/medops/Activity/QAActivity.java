@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -64,7 +65,7 @@ public class QAActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.qatoolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.leftarrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -82,6 +83,7 @@ public class QAActivity extends AppCompatActivity {
         userImage = findViewById(R.id.userimage);
         comment = findViewById(R.id.sendmessage);
         sendbutton = findViewById(R.id.sendicon);
+        getSupportActionBar().setTitle(userName.getText().toString());
         sendbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
