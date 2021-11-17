@@ -47,7 +47,7 @@ public class UserHomeFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
     private LinearLayout takeImageCard;
-    private TextView takeImageButton,predictButton,predictResult;
+    private TextView predictButton,predictResult;
     private Bitmap img;
     private ImageView predictImg;
 
@@ -69,7 +69,6 @@ public class UserHomeFragment extends Fragment {
         getImageFunction = new ImageGetHelper(this,null);
 
         takeImageCard = view.findViewById(R.id.takeimgcard);
-        takeImageButton = view.findViewById(R.id.takeimgbutton);
 
         takeImageCard.setOnClickListener(new View.OnClickListener() {
             @Override

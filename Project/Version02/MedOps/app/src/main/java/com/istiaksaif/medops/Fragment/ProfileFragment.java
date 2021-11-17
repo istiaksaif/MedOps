@@ -20,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +42,10 @@ import com.google.firebase.storage.UploadTask;
 import com.istiaksaif.medops.Activity.AddMoneyActivity;
 import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
 import com.istiaksaif.medops.Activity.EditProfessionalInfoActivity;
+import com.istiaksaif.medops.Adapter.DoctorListAdapter;
+import com.istiaksaif.medops.Adapter.ProfileAdapter;
+import com.istiaksaif.medops.Model.DoctorItem;
+import com.istiaksaif.medops.Model.User;
 import com.istiaksaif.medops.R;
 import com.istiaksaif.medops.Utils.AgeCalculator;
 import com.istiaksaif.medops.Utils.ImageGetHelper;
@@ -47,6 +53,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
@@ -54,7 +61,7 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
-    private ImageView logoutButton,imageView;
+    private ImageView imageView;
     private TextView nid,fullName,email,phone,personalinfo,DOB,BloodGroup,Height,Weight,Age,
             editAddress,balanceTk,editPhone,userAddress,addMoney;
     private LinearLayout layout;
@@ -70,6 +77,10 @@ public class ProfileFragment extends Fragment {
     private GoogleSignInClient googleSignInClient;
     private AgeCalculator age = null;
 
+    private RecyclerView profileRecycler;
+    private ProfileAdapter profileAdapter;
+    private ArrayList<User> userArrayList;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -79,7 +90,6 @@ public class ProfileFragment extends Fragment {
         age=new AgeCalculator();
         age.getCurrentDate();
 
-        logoutButton = view.findViewById(R.id.logout);
         imageView = view.findViewById(R.id.profileimage);
         fullName = view.findViewById(R.id.profilefullname);
         DOB = view.findViewById(R.id.dob);
@@ -114,13 +124,61 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Update Profile Image");
+                profilePhoto = "imageUrl";
+                getImageFunction.pickFromGallery();
+            }
+        });
+        personalinfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+        professionalInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditProfessionalInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+        editAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Update Address");
+                showMoreUpdating("address");
+            }
+        });
+        editPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Update Phone Number");
+                showMoreUpdating("phone");
+            }
+        });
+
         progressDialog = new ProgressDialog(getActivity());
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         storageReference = FirebaseStorage.getInstance().getReference();
+//
+//        userArrayList = new ArrayList<>();
+//
+//        profileRecycler = view.findViewById(R.id.profileRecycler);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        profileRecycler.setLayoutManager(layoutManager);
+//        profileRecycler.setHasFixedSize(true);
+//
+//        GetDataFromFirebase();
 
-        Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
-        query.addValueEventListener(new ValueEventListener() {
+        Query query = databaseReference.orderByChild("userId").equalTo(uid);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
@@ -198,44 +256,6 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(),"Some Thing Wrong", Toast.LENGTH_SHORT).show();
             }
         });
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.setMessage("Update Profile Image");
-                profilePhoto = "imageUrl";
-                getImageFunction.showImagePicDialog();
-            }
-        });
-
-        personalinfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
-                startActivity(intent);
-            }
-        });
-        professionalInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditProfessionalInfoActivity.class);
-                startActivity(intent);
-            }
-        });
-        editAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.setMessage("Update Address");
-                showMoreUpdating("address");
-            }
-        });
-        editPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.setMessage("Update Phone Number");
-                showMoreUpdating("phone");
-            }
-        });
     }
 
     private void showMoreUpdating(String key) {
@@ -264,12 +284,14 @@ public class ProfileFragment extends Fragment {
                                 public void onSuccess(Void aVoid) {
                                     progressDialog.dismiss();
                                     Toast.makeText(getActivity(),"Updating "+key,Toast.LENGTH_SHORT).show();
+                                    getActivity().finish();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Error ",Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
                         }
                     });
 
@@ -297,9 +319,6 @@ public class ProfileFragment extends Fragment {
                 imageView.setImageURI(imageUri);
             }
             if(requestCode == getImageFunction.IMAGE_PICK_CAMERA_CODE){
-//                String s = getImageFunction.pathFile;
-//                Bitmap bitmap = BitmapFactory.decodeFile(s);
-//                imageView.setImageBitmap(bitmap);
                 try {
                     uploadProfilePhoto(getImageFunction.imageUri);
                     imageView.setImageURI(getImageFunction.imageUri);
@@ -346,18 +365,21 @@ public class ProfileFragment extends Fragment {
                                     progressDialog.dismiss();
                                     pro.dismiss();
                                     Toast.makeText(getContext(),"Image Update", Toast.LENGTH_SHORT).show();
+                                    getActivity().finish();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
                             Toast.makeText(getContext(),"Error Update", Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
                         }
                     });
                 }
                 else {
                     progressDialog.dismiss();
                     Toast.makeText(getActivity(),"Error", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -365,9 +387,56 @@ public class ProfileFragment extends Fragment {
             public void onFailure(@NonNull Exception e) {
                 progressDialog.dismiss();
                 Toast.makeText(getActivity(),e.getMessage(), Toast.LENGTH_SHORT).show();
+                getActivity().finish();
             }
         });
     }
+
+
+//    private void GetDataFromFirebase() {
+//        Query query = databaseReference.child("users").orderByChild("userId").equalTo(uid);
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                ClearAll();
+//                for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
+//                    try {
+//                        User user = new User();
+//                        user.setName(dataSnapshot.child("name").getValue().toString());
+//                        user.setDob(dataSnapshot.child("dob").getValue().toString());
+//                        user.setBloodgroup(dataSnapshot.child("bloodgroup").getValue().toString());
+//                        user.setBalanceTk(dataSnapshot.child("balanceTk").getValue().toString());
+//                        user.setImageUrl(dataSnapshot.child("imageUrl").getValue().toString());
+//                        user.setEmail(dataSnapshot.child("email").getValue().toString());
+//                        user.setPhone(dataSnapshot.child("phone").getValue().toString());
+//                        user.setNid(dataSnapshot.child("nid").getValue().toString());
+//
+//                        userArrayList.add(user);
+//                    }catch (Exception e){
+//
+//                    }
+//                }
+//                profileAdapter = new ProfileAdapter(getContext(), userArrayList);
+//                profileRecycler.setAdapter(profileAdapter);
+//                profileAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
+//
+//    private void ClearAll(){
+//        if (userArrayList !=null){
+//            userArrayList.clear();
+//            if (profileAdapter !=null){
+//                profileAdapter.notifyDataSetChanged();
+//            }
+//        }
+//        userArrayList = new ArrayList<>();
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -375,5 +444,4 @@ public class ProfileFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_profile, container, false);
         return view;
     }
-
 }

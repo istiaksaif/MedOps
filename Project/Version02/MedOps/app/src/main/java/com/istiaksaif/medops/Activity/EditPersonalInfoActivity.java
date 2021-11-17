@@ -2,6 +2,7 @@ package com.istiaksaif.medops.Activity;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -16,8 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -34,10 +37,6 @@ import com.istiaksaif.medops.R;
 import java.util.Calendar;
 import java.util.HashMap;
 
-/**
- * Created by Istiak Saif on 10/08/21.
- */
-
 public class EditPersonalInfoActivity extends AppCompatActivity {
 
     private TextInputEditText fullName,dateOfBirth,nid,height,weight;
@@ -50,6 +49,7 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String uid = user.getUid();
     private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,8 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         toolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(EditPersonalInfoActivity.this, UserHomeActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -106,7 +108,7 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
 
 
         Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
@@ -173,9 +175,9 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
 
 
         databaseReference.child(uid).updateChildren(result)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onComplete(@NonNull Task<Void> task) {
                         progressDialog.dismiss();
                         finish();
                     }
