@@ -185,6 +185,7 @@ public class LogInActivity extends AppCompatActivity {
                 if (snapshot.child("nid").getValue(String.class).equals("")) {
                     progressDialog.dismiss();
                     updateUI(user);
+                    finish();
                 }
                 else{
                     if (snapshot.child("isUser").getValue(String.class).equals("User")) {
@@ -206,6 +207,7 @@ public class LogInActivity extends AppCompatActivity {
                             user.sendEmailVerification();
                             Toast.makeText(LogInActivity.this,"Check your email to verify your account",Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();
+                            finish();
                         }
                     }
                     if (snapshot.child("isUser").getValue(String.class).equals("Nurse")) {
@@ -275,6 +277,7 @@ public class LogInActivity extends AppCompatActivity {
                                     +task.getException().toString(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LogInActivity.this, LogInActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     }
                 });

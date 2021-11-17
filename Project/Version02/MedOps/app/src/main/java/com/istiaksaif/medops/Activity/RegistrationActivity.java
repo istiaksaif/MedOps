@@ -127,6 +127,7 @@ public class RegistrationActivity extends AppCompatActivity {
                             Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegistrationActivity.this, UserHomeActivity.class);
                             startActivity(intent);
+                            finish();
                         } else {
                             Toast.makeText(RegistrationActivity.this, "Authentication Failed "+task.getException().toString(), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity.class);
