@@ -20,10 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -42,10 +40,8 @@ import com.google.firebase.storage.UploadTask;
 import com.istiaksaif.medops.Activity.AddMoneyActivity;
 import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
 import com.istiaksaif.medops.Activity.EditProfessionalInfoActivity;
-import com.istiaksaif.medops.Adapter.DoctorListAdapter;
-import com.istiaksaif.medops.Adapter.ProfileAdapter;
-import com.istiaksaif.medops.Model.DoctorItem;
-import com.istiaksaif.medops.Model.User;
+import com.istiaksaif.medops.Activity.UserHomeActivity;
+import com.istiaksaif.medops.Activity.checkActivity;
 import com.istiaksaif.medops.R;
 import com.istiaksaif.medops.Utils.AgeCalculator;
 import com.istiaksaif.medops.Utils.ImageGetHelper;
@@ -53,11 +49,13 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
-
+/**
+ * Created some functions by Istiak Saif on 02/07/21.
+ * update some functions by Istiak Saif on 20/11/21.
+ */
 public class ProfileFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
@@ -66,20 +64,14 @@ public class ProfileFragment extends Fragment {
             editAddress,balanceTk,editPhone,userAddress,addMoney;
     private LinearLayout layout;
     private TextView professionalInfo,designation,workingIn,workingExperience,BMDCId,consultHour,consultDays,consultFee;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference,dataRef;
     private StorageReference storageReference;
     private Uri imageUri;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private String uid = user.getUid();
+    private String uid;
     private ProgressDialog progressDialog,pro;
 
     private String profilePhoto;
-    private GoogleSignInClient googleSignInClient;
     private AgeCalculator age = null;
-
-    private RecyclerView profileRecycler;
-    private ProfileAdapter profileAdapter;
-    private ArrayList<User> userArrayList;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -89,6 +81,8 @@ public class ProfileFragment extends Fragment {
 
         age=new AgeCalculator();
         age.getCurrentDate();
+
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         imageView = view.findViewById(R.id.profileimage);
         fullName = view.findViewById(R.id.profilefullname);
@@ -137,7 +131,6 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
                 startActivity(intent);
-                getActivity().finish();
             }
         });
         professionalInfo.setOnClickListener(new View.OnClickListener() {
@@ -165,90 +158,93 @@ public class ProfileFragment extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        dataRef = FirebaseDatabase.getInstance().getReference();
         storageReference = FirebaseStorage.getInstance().getReference();
-//
-//        userArrayList = new ArrayList<>();
-//
-//        profileRecycler = view.findViewById(R.id.profileRecycler);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        profileRecycler.setLayoutManager(layoutManager);
-//        profileRecycler.setHasFixedSize(true);
-//
-//        GetDataFromFirebase();
 
         Query query = databaseReference.orderByChild("userId").equalTo(uid);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
-                    String name = ""+dataSnapshot.child("name").getValue();
-                    String dob = "DOB :  "+dataSnapshot.child("dob").getValue();
-                    String blood = "Blood Group :  "+dataSnapshot.child("bloodgroup").getValue();
-                    String height = "Height :  "+dataSnapshot.child("height").getValue()+" cm";
-                    String weight = "Weight :  "+dataSnapshot.child("weight").getValue()+" kg";
-                    String retriveEmail = "   "+dataSnapshot.child("email").getValue();
-                    String img = ""+dataSnapshot.child("imageUrl").getValue();
-                    String receivephone = "  "+dataSnapshot.child("phone").getValue();
-                    String receivenid = "NID :  "+dataSnapshot.child("nid").getValue();
-                    String address = "          "+dataSnapshot.child("address").getValue();
-                    String balancetk = " "+dataSnapshot.child("balanceTk").getValue()+" ";
+                    String key = dataSnapshot.child("key").getValue().toString();
+                    dataRef.child("usersData").child(key)
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
+                                        String name = ""+dataSnapshot2.child("name").getValue();
+                                        String d = "DOB :  "+dataSnapshot2.child("dob").getValue();
+                                        String blood = "Blood Group :  "+dataSnapshot2.child("bloodgroup").getValue();
+                                        String height = "Height :  "+dataSnapshot2.child("height").getValue()+" cm";
+                                        String weight = "Weight :  "+dataSnapshot2.child("weight").getValue()+" kg";
+                                        String retriveEmail = "   "+dataSnapshot2.child("email").getValue();
+                                        String img = ""+dataSnapshot2.child("imageUrl").getValue();
+                                        String receivephone = "  "+dataSnapshot2.child("phone").getValue();
+                                        String receivenid = "NID :  "+dataSnapshot2.child("nid").getValue();
+                                        String address = "          "+dataSnapshot2.child("address").getValue();
+                                        String balancetk = " "+dataSnapshot2.child("balanceTk").getValue()+" ";
 
-                    String d = ""+dataSnapshot.child("dob").getValue();
+                                        String dob = ""+dataSnapshot2.child("dob").getValue();
 
-                    try {
-                        String str[] = d.split("/");
-                        int dayOfMonth = Integer.parseInt(str[0]);
-                        int month = Integer.parseInt(str[1]);
-                        int year = Integer.parseInt(str[2]);
-                        age.setDateOfBirth(year, month, dayOfMonth);
-                        age.calcualteYear();
-                        age.calcualteMonth();
-                        age.calcualteDay();
-                        String age1 = "Age :  " + age.getResult() + " yrs";
-                        Age.setText(age1);
-                    }catch (Exception e){
-                    }
-                    String userType = ""+dataSnapshot.child("isUser").getValue();
-                    if(userType.equals("Doctor")){
-                        layout.setVisibility(View.VISIBLE);
-                        designation.setText(" "+dataSnapshot.child("designation").getValue()+" ");
-                        workingIn.setText(" "+dataSnapshot.child("workingIn").getValue()+" ");
-                        String experience = ""+dataSnapshot.child("workingExperience").getValue();
-                        try {
-                            String str1[] = experience.split("/");
-                            int dayOfMonth1 = Integer.parseInt(str1[0]);
-                            int month1 = Integer.parseInt(str1[1]);
-                            int year1 = Integer.parseInt(str1[2]);
-                            age.setDateOfBirth(year1, month1, dayOfMonth1);
-                            age.calcualteYear();
-                            age.calcualteMonth();
-                            age.calcualteDay();
-                            workingExperience.setText(" Experience : "+age.getResult()+" yrs");
-                        }catch (Exception e){
+                                        try {
+                                            String str[] = dob.split("/");
+                                            int dayOfMonth = Integer.parseInt(str[0]);
+                                            int month = Integer.parseInt(str[1]);
+                                            int year = Integer.parseInt(str[2]);
+                                            age.setDateOfBirth(year, month, dayOfMonth);
+                                            age.calcualteYear();
+                                            age.calcualteMonth();
+                                            age.calcualteDay();
+                                            String age1 = "Age :  " + age.getResult() + " yrs";
+                                            Age.setText(age1);
+                                        }catch (Exception e){
+                                        }
+                                        String userType = dataSnapshot2.child("isUser").getValue().toString();
+                                        if(userType.equals("Doctor")){
+                                            layout.setVisibility(View.VISIBLE);
+                                            designation.setText(" "+dataSnapshot2.child("designation").getValue()+" ");
+                                            workingIn.setText(" "+dataSnapshot2.child("workingIn").getValue()+" ");
+                                            String experience = ""+dataSnapshot2.child("workingExperience").getValue();
+                                            try {
+                                                String str1[] = experience.split("/");
+                                                int dayOfMonth1 = Integer.parseInt(str1[0]);
+                                                int month1 = Integer.parseInt(str1[1]);
+                                                int year1 = Integer.parseInt(str1[2]);
+                                                age.setDateOfBirth(year1, month1, dayOfMonth1);
+                                                age.calcualteYear();
+                                                age.calcualteMonth();
+                                                age.calcualteDay();
+                                                workingExperience.setText(" Experience : "+age.getResult()+" yrs");
+                                            }catch (Exception e){
 
-                        }
-                        BMDCId.setText(" BMDCID : "+dataSnapshot.child("bmdcID").getValue()+" ");
-                        consultHour.setText(" ConsultHour : "+dataSnapshot.child("consultHour").getValue()+" to "+dataSnapshot.child("consultHourTo").getValue());
-                        consultDays.setText(" ConsultDays : "+dataSnapshot.child("consultDays").getValue()+" ");
-                        consultFee.setText(" ConsultFee : "+dataSnapshot.child("consultFee").getValue()+" ");
-                    }
-                    fullName.setText(name);
-                    DOB.setText(dob);
-                    BloodGroup.setText(blood);
-                    email.setText(retriveEmail);
-                    phone.setText(receivephone);
-                    nid.setText(receivenid);
-                    Height.setText(height);
-                    Weight.setText(weight);
-                    userAddress.setText(address);
-                    balanceTk.setText(balancetk);
+                                            }
+                                            BMDCId.setText(" BMDCID : "+dataSnapshot2.child("bmdcID").getValue()+" ");
+                                            consultHour.setText(" ConsultHour : "+dataSnapshot2.child("consultHour").getValue()+" to "+dataSnapshot2.child("consultHourTo").getValue());
+                                            consultDays.setText(" ConsultDays : "+dataSnapshot2.child("consultDays").getValue()+" ");
+                                            consultFee.setText(" ConsultFee : "+dataSnapshot2.child("consultFee").getValue()+" ");
+                                        }
+                                        fullName.setText(name);
+                                        DOB.setText(d);
+                                        BloodGroup.setText(blood);
+                                        email.setText(retriveEmail);
+                                        phone.setText(receivephone);
+                                        nid.setText(receivenid);
+                                        Height.setText(height);
+                                        Weight.setText(weight);
+                                        userAddress.setText(address);
+                                        balanceTk.setText(balancetk);
 
-                    try {
-                        Picasso.get().load(img).resize(320,320).into(imageView);
-                    }catch (Exception e){
-                        Picasso.get().load(R.drawable.dropdown).into(imageView);
-                    }
+                                        try {
+                                            Picasso.get().load(img).resize(320,320).into(imageView);
+                                        }catch (Exception e){
+                                            Picasso.get().load(R.drawable.dropdown).into(imageView);
+                                        }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                 }
             }
             @Override
@@ -278,22 +274,34 @@ public class ProfileFragment extends Fragment {
                     HashMap<String, Object> result = new HashMap<>();
                     result.put(key, value);
 
-                    databaseReference.child(uid).updateChildren(result)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    databaseReference.orderByChild("userId").equalTo(uid)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getActivity(),"Updating "+key,Toast.LENGTH_SHORT).show();
-                                    getActivity().finish();
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot dataSnapshot:snapshot.getChildren()){
+                                        String k = dataSnapshot.child("key").getValue().toString();
+                                        dataRef.child("usersData").child(k).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                dataRef.child("usersData").child(snapshot.getKey()).updateChildren(result);
+                                                progressDialog.dismiss();
+                                                Toast.makeText(getActivity(),"Updating "+key,Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Error ",Toast.LENGTH_SHORT).show();
-                            getActivity().finish();
-                        }
-                    });
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getActivity(),"Error ", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                 }else {
                     Toast.makeText(getActivity(),"Please Enter "+key,Toast.LENGTH_SHORT).show();
@@ -358,23 +366,36 @@ public class ProfileFragment extends Fragment {
                     HashMap<String, Object> results = new HashMap<>();
                     results.put(profilePhoto,downloadUri.toString());
 
-                    databaseReference.child(uid).updateChildren(results)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    databaseReference.orderByChild("userId").equalTo(uid)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    progressDialog.dismiss();
-                                    pro.dismiss();
-                                    Toast.makeText(getContext(),"Image Update", Toast.LENGTH_SHORT).show();
-                                    getActivity().finish();
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot dataSnapshot:snapshot.getChildren()){
+                                        String k = dataSnapshot.child("key").getValue().toString();
+                                        dataRef.child("usersData").child(k).addListenerForSingleValueEvent(
+                                                new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                dataRef.child("usersData").child(snapshot.getKey()).updateChildren(results);
+                                                progressDialog.dismiss();
+                                                pro.dismiss();
+                                                Toast.makeText(getContext(),"Image Update", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getContext(),"Error Update", Toast.LENGTH_SHORT).show();
-                            getActivity().finish();
-                        }
-                    });
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getContext(),"Error Update", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }
                 else {
                     progressDialog.dismiss();
@@ -391,52 +412,6 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-
-
-//    private void GetDataFromFirebase() {
-//        Query query = databaseReference.child("users").orderByChild("userId").equalTo(uid);
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                ClearAll();
-//                for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
-//                    try {
-//                        User user = new User();
-//                        user.setName(dataSnapshot.child("name").getValue().toString());
-//                        user.setDob(dataSnapshot.child("dob").getValue().toString());
-//                        user.setBloodgroup(dataSnapshot.child("bloodgroup").getValue().toString());
-//                        user.setBalanceTk(dataSnapshot.child("balanceTk").getValue().toString());
-//                        user.setImageUrl(dataSnapshot.child("imageUrl").getValue().toString());
-//                        user.setEmail(dataSnapshot.child("email").getValue().toString());
-//                        user.setPhone(dataSnapshot.child("phone").getValue().toString());
-//                        user.setNid(dataSnapshot.child("nid").getValue().toString());
-//
-//                        userArrayList.add(user);
-//                    }catch (Exception e){
-//
-//                    }
-//                }
-//                profileAdapter = new ProfileAdapter(getContext(), userArrayList);
-//                profileRecycler.setAdapter(profileAdapter);
-//                profileAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//    }
-//
-//    private void ClearAll(){
-//        if (userArrayList !=null){
-//            userArrayList.clear();
-//            if (profileAdapter !=null){
-//                profileAdapter.notifyDataSetChanged();
-//            }
-//        }
-//        userArrayList = new ArrayList<>();
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

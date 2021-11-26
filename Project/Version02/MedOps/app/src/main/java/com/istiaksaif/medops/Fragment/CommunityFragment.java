@@ -81,24 +81,33 @@ public class CommunityFragment extends Fragment {
                         item.setQuesId(snapshot.child("quesId").getValue().toString());
                         item.setReply(Long.toString(snapshot.child("Comments").getChildrenCount()));
                         String userid = snapshot.child("userId").getValue().toString();
-                        Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("userId").equalTo(userid);
+                        Query query = FirebaseDatabase.getInstance().getReference("users").child(userid);
                         query.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                                for (DataSnapshot dataSnapshot1:snapshot1.getChildren()){
-                                    try {
-                                        String uImg = dataSnapshot1.child("imageUrl").getValue().toString();
-                                        String uName = dataSnapshot1.child("name").getValue().toString();
-                                        item.setUserimage(uImg);
-                                        item.setUserName(uName);
-                                        qaItemArrayList.add(item);
-                                    }catch (Exception e){
+                                String k = snapshot1.child("key").getValue().toString();
+                                databaseReference.child("usersData").child(k).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                        try {
+                                            String uImg = dataSnapshot1.child("imageUrl").getValue().toString();
+                                            String uName = dataSnapshot1.child("name").getValue().toString();
+                                            item.setUserimage(uImg);
+                                            item.setUserName(uName);
+                                            qaItemArrayList.add(item);
+                                        }catch (Exception e){
+
+                                        }
+                                        communityQAListAdapter = new CommunityQAListAdapter(getContext(), qaItemArrayList);
+                                        qarecycler.setAdapter(communityQAListAdapter);
+                                        communityQAListAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
 
                                     }
-                                }
-                                communityQAListAdapter = new CommunityQAListAdapter(getContext(), qaItemArrayList);
-                                qarecycler.setAdapter(communityQAListAdapter);
-                                communityQAListAdapter.notifyDataSetChanged();
+                                });
                             }
 
                             @Override

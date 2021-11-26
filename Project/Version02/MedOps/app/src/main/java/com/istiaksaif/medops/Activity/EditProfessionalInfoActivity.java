@@ -27,8 +27,12 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.istiaksaif.medops.Adapter.DayAdapter;
 import com.istiaksaif.medops.Adapter.TimeAdapter;
 import com.istiaksaif.medops.Model.DaySelectModel;
@@ -80,7 +84,7 @@ public class EditProfessionalInfoActivity extends AppCompatActivity {
         });
 
         progressDialog = new ProgressDialog(this);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         Designation = findViewById(R.id.designation);
         workingExperience = findViewById(R.id.workingExperience);
@@ -169,6 +173,44 @@ public class EditProfessionalInfoActivity extends AppCompatActivity {
                 Info(stringBuilder.toString().trim());
             }
         });
+        Query query = databaseReference.child("users").orderByChild("userId").equalTo(uid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
+                    String key = dataSnapshot.child("key").getValue().toString();
+                    databaseReference.child("usersData").child(key)
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String bmdcID = ""+dataSnapshot.child("bmdcID").getValue();
+                                    String consultfee = ""+dataSnapshot.child("consultFee").getValue();
+                                    String degrees = ""+dataSnapshot.child("degrees").getValue();
+                                    String designation = ""+dataSnapshot.child("designation").getValue();
+                                    String workingin = ""+dataSnapshot.child("workingIn").getValue();
+                                    String WorkingExp = ""+dataSnapshot.child("workingExperience").getValue();
+
+
+                                    BMDCId.setText(bmdcID);
+                                    consultFee.setText(consultfee);
+                                    Degrees.setText(degrees);
+                                    Designation.setText(designation);
+                                    workingIn.setText(workingin);
+                                    workingExperience.setText(WorkingExp);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext(),"Some Thing Wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showToast(String msg) {
@@ -204,21 +246,34 @@ public class EditProfessionalInfoActivity extends AppCompatActivity {
         result.put("consultDays", msg);
         result.put("degrees", Dr_Degrees);
 
-        databaseReference.child(uid).updateChildren(result)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        databaseReference.child("users").child(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        progressDialog.dismiss();
-                        finish();
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String k = snapshot.child("key").getValue().toString();
+                        databaseReference.child("usersData").child(k).addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        databaseReference.child("usersData").child(snapshot.getKey()).updateChildren(result);
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(),"Updates Done", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
-                Toast.makeText(EditProfessionalInfoActivity.this, "Error ", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Error ", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
     private DatePickerDialog.OnDateSetListener datepickerListener = new DatePickerDialog.OnDateSetListener() {

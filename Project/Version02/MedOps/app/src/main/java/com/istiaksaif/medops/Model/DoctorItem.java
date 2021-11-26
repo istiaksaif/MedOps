@@ -1,13 +1,13 @@
 package com.istiaksaif.medops.Model;
 
 public class DoctorItem {
-    private String name,email,phone,dob,bloodgroup,isUser,imageUrl,nid,userId,status,balanceTk
+    private String name,email,phone,dob,bloodgroup,isUser,imageUrl,nid,userId,balanceTk
             ,verifyStatus,bmdcID,consultFee,workingIn,degrees,designation,workingExperience,
             consultHour,consultHourTo,consultDays;
     public DoctorItem() {
     }
 
-    public DoctorItem(String name, String email, String phone, String dob, String bloodgroup, String isUser, String imageUrl, String nid, String userId, String status, String balanceTk, String verifyStatus, String bmdcID, String consultFee, String workingIn, String degrees, String designation, String workingExperience, String consultHour, String consultHourTo,String consultDays) {
+    public DoctorItem(String name, String email, String phone, String dob, String bloodgroup, String isUser, String imageUrl, String nid, String userId, String balanceTk, String verifyStatus, String bmdcID, String consultFee, String workingIn, String degrees, String designation, String workingExperience, String consultHour, String consultHourTo,String consultDays) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -17,7 +17,6 @@ public class DoctorItem {
         this.imageUrl = imageUrl;
         this.nid = nid;
         this.userId = userId;
-        this.status = status;
         this.balanceTk = balanceTk;
         this.verifyStatus = verifyStatus;
         this.bmdcID = bmdcID;
@@ -101,14 +100,6 @@ public class DoctorItem {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getBalanceTk() {

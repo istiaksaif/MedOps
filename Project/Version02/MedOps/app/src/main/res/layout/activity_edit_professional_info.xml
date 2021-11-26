@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".Activity.EditProfessionalInfoActivity">
 
@@ -60,7 +61,8 @@
                         android:paddingStart="15dp"
                         android:inputType="number"
                         android:textColorHint="@color/dark"
-                        android:background="@null"/>
+                        android:background="@null"
+                        android:textColor="@color/dark"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -81,7 +83,8 @@
                         android:paddingStart="15dp"
                         android:inputType="text"
                         android:textColorHint="@color/dark"
-                        android:background="@null"/>
+                        android:background="@null"
+                        android:textColor="@color/dark"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -102,7 +105,8 @@
                         android:paddingStart="15dp"
                         android:inputType="text"
                         android:textColorHint="@color/dark"
-                        android:background="@null"/>
+                        android:background="@null"
+                        android:textColor="@color/dark"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -123,7 +127,8 @@
                         android:paddingStart="15dp"
                         android:inputType="text"
                         android:textColorHint="@color/dark"
-                        android:background="@null"/>
+                        android:background="@null"
+                        android:textColor="@color/dark"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -145,6 +150,7 @@
                         android:paddingStart="15dp"
                         android:textColorHint="@color/dark"
                         android:background="@null"
+                        android:textColor="@color/dark"
                         android:drawableEnd="@drawable/calendar"
                         android:focusable="false"
                         android:clickable="true"/>
@@ -168,7 +174,8 @@
                         android:paddingStart="15dp"
                         android:inputType="number"
                         android:textColorHint="@color/dark"
-                        android:background="@null"/>
+                        android:background="@null"
+                        android:textColor="@color/dark"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <TextView
                     android:layout_width="match_parent"

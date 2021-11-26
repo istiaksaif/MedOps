@@ -2,12 +2,17 @@ package com.istiaksaif.medops.Fragment;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +24,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.istiaksaif.medops.Activity.PredictActivity;
+import com.istiaksaif.medops.Adapter.DoctorListAdapter;
+import com.istiaksaif.medops.Adapter.UpcomingAppointmentAdapter;
+import com.istiaksaif.medops.Model.DoctorItem;
 import com.istiaksaif.medops.R;
 import com.istiaksaif.medops.Utils.ImageGetHelper;
+import com.istiaksaif.medops.ml.MedOps;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -37,8 +58,11 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,20 +71,14 @@ public class UserHomeFragment extends Fragment {
 
     private ImageGetHelper getImageFunction;
     private LinearLayout takeImageCard;
-    private TextView predictButton,predictResult;
-    private Bitmap img;
-    private ImageView predictImg;
 
-    protected Interpreter interpreter;
-    private TensorImage inputImageBuffer;
-    private TensorBuffer outputBuffer;
-    private TensorProcessor tensorProcessor;
-    private int imageSizeX,imageSizeY;
-    private static final float IMAGE_MEAN = 0.0f;
-    private static final float IMAGE_STD= 1.0f;
-    private static final float PROBABILITY_MEAN = 0.0f;
-    private static final float PROBABILITY_STD = 255.0f;
-    private List<String> labels;
+    private RecyclerView appoinRecycler;
+    private UpcomingAppointmentAdapter upcomingAppointmentAdapter;
+    private ArrayList<DoctorItem> ItemList;
+    private DatabaseReference databaseReference;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private String uid = user.getUid();
+    private TextView visitText;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -69,7 +87,6 @@ public class UserHomeFragment extends Fragment {
         getImageFunction = new ImageGetHelper(this,null);
 
         takeImageCard = view.findViewById(R.id.takeimgcard);
-
         takeImageCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,98 +94,101 @@ public class UserHomeFragment extends Fragment {
             }
         });
 
-        predictResult = view.findViewById(R.id.predictResult);
-        predictImg = view.findViewById(R.id.predictimg);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        ItemList = new ArrayList<>();
 
-        predictButton = view.findViewById(R.id.predictbutton);
+        visitText = view.findViewById(R.id.visitText);
+        visitText.setVisibility(View.GONE);
+        appoinRecycler = view.findViewById(R.id.appoinRecycler);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        appoinRecycler.setLayoutManager(layoutManager);
+        appoinRecycler.setHasFixedSize(true);
+        GetDataFromFirebase();
+    }
 
-        try {
-            interpreter = new Interpreter(loadTFLiteModel());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        predictButton.setOnClickListener(new View.OnClickListener() {
+    private void GetDataFromFirebase() {
+        Query query = databaseReference.child("appointment").orderByChild("userId").equalTo(uid);
+        query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                autoDetection();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ClearAll();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    DoctorItem doctorItem = new DoctorItem();
+                    try {
+                        String Status = snapshot.child("status").getValue().toString();
+                        if (Status.equals("confirm")){
+                            visitText.setVisibility(View.VISIBLE);
+                            doctorItem.setDegrees(snapshot.child("status").getValue().toString());
+                            doctorItem.setConsultHourTo(snapshot.child("time").getValue().toString());
+                            doctorItem.setDob(snapshot.child("date").getValue().toString());
+
+                            String doctorId = snapshot.child("doctorId").getValue().toString();
+                            Query query1 = databaseReference.child("users").child(doctorId);
+                            query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    String k = snapshot.child("key").getValue().toString();
+                                    databaseReference.child("usersData").child(k)
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    doctorItem.setName(snapshot.child("name").getValue().toString());
+                                                    doctorItem.setImageUrl(snapshot.child("imageUrl").getValue().toString());
+                                                    doctorItem.setDesignation(snapshot.child("designation").getValue().toString());
+
+                                                    ItemList.add(doctorItem);
+
+                                                    upcomingAppointmentAdapter = new UpcomingAppointmentAdapter(getContext(), ItemList);
+                                                    appoinRecycler.setAdapter(upcomingAppointmentAdapter);
+                                                    upcomingAppointmentAdapter.notifyDataSetChanged();
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
-    private void autoDetection(){
-        int imageTensorIndex = 0;
-        int[] imageShape = interpreter.getInputTensor(imageTensorIndex).shape();
-        imageSizeY = imageShape[1];
-        imageSizeX = imageShape[2];
-        DataType imageDataType = interpreter.getInputTensor(imageTensorIndex).dataType();
 
-        int probabilityTensorIndex = 0;
-        int[] probabilityShape = interpreter.getOutputTensor(probabilityTensorIndex).shape();
-        DataType probabilityDataType = interpreter.getOutputTensor(probabilityTensorIndex).dataType();
-        inputImageBuffer = new TensorImage(imageDataType);
-        outputBuffer = TensorBuffer.createFixedSize(probabilityShape,probabilityDataType);
-        tensorProcessor = new TensorProcessor.Builder().add(getPostProcessorNormalizeOP()).build();
-
-        inputImageBuffer = loadImage(img);
-        interpreter.run(inputImageBuffer.getBuffer(),outputBuffer.getBuffer().rewind());
-        showResult();
+    private void ClearAll(){
+        if (ItemList !=null){
+            ItemList.clear();
+            if (upcomingAppointmentAdapter !=null){
+                upcomingAppointmentAdapter.notifyDataSetChanged();
+            }
+        }
+        ItemList = new ArrayList<>();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == getImageFunction.IMAGE_PICK_GALLERY_CODE && resultCode == RESULT_OK && data != null) {
             Uri image = data.getData();
-            predictImg.setImageURI(image);
-            predictButton.setVisibility(View.VISIBLE);
-            predictResult.setText("loading.........");
-            try {
-                img = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),image);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Intent intent = new Intent(getActivity(), PredictActivity.class);
+            intent.putExtra("image",image.toString());
+            getActivity().startActivity(intent);
         }
-    }
-
-    private TensorImage loadImage(final Bitmap bitmap){
-        inputImageBuffer.load(bitmap);
-        int cropSize = Math.min(bitmap.getWidth(),bitmap.getHeight());
-        ImageProcessor imageProcessor = new ImageProcessor.Builder()
-                .add(new ResizeWithCropOrPadOp(cropSize,cropSize))
-                .add(new ResizeOp(imageSizeX,imageSizeY,ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
-                .add(getPreProcessorNormalizeOP()).build();
-        return imageProcessor.process(inputImageBuffer);
-    }
-    //load tfLite model
-    private MappedByteBuffer loadTFLiteModel() throws IOException{
-        AssetFileDescriptor fileDescriptor = getActivity().getAssets().openFd("MedOps.tflite");
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declareLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY,startOffset,declareLength);
-    }
-
-    private TensorOperator getPreProcessorNormalizeOP(){
-        return new NormalizeOp(IMAGE_MEAN,IMAGE_STD);
-    }
-    private TensorOperator getPostProcessorNormalizeOP(){
-        return new NormalizeOp(PROBABILITY_MEAN,PROBABILITY_STD);
-    }
-
-    private void showResult(){
-        try {
-            labels = FileUtil.loadLabels(getActivity(),"labels.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Map<String,Float> labelProbability = new TensorLabel(labels,
-                tensorProcessor.process(outputBuffer)).getMapWithFloatValue();
-        float maxValueInMap = (Collections.max(labelProbability.values()));
-        for(Map.Entry<String, Float> entry : labelProbability.entrySet()){
-            if(entry.getValue()==maxValueInMap){
-                predictResult.setText(entry.getKey());
-            }
-        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

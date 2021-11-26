@@ -52,7 +52,7 @@ public class DoctorsListFragment extends Fragment {
         GetDataFromFirebase();
     }
     private void GetDataFromFirebase() {
-        Query query = doctorsDatabaseRef.child("users").orderByChild("isUser").equalTo("Doctor");
+        Query query = doctorsDatabaseRef.child("usersData").orderByChild("isUser").equalTo("Doctor");
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -67,7 +67,6 @@ public class DoctorsListFragment extends Fragment {
                             doctorItem.setWorkingIn(snapshot.child("workingIn").getValue().toString());
                             doctorItem.setDegrees(snapshot.child("degrees").getValue().toString());
                             doctorItem.setDesignation(snapshot.child("designation").getValue().toString());
-                            doctorItem.setStatus(snapshot.child("status").getValue().toString());
 
                             doctorItemList.add(doctorItem);
                         }

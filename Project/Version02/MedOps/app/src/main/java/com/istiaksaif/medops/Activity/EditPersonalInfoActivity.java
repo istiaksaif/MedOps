@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.istiaksaif.medops.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         });
 
         progressDialog = new ProgressDialog(this);
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         fullName = findViewById(R.id.name);
         dateOfBirth = findViewById(R.id.dateofbirth);
@@ -83,7 +84,8 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
                 int nMonth = calendar.get(Calendar.MONTH);
                 int nDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, datepickerListener, nYear, nMonth, nDay);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(),
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth, datepickerListener, nYear, nMonth, nDay);
                 datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 datePickerDialog.show();
             }
@@ -106,31 +108,41 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
             }
         });
 
-
-        Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query = databaseReference.child("users").orderByChild("userId").equalTo(uid);
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
-                    String name = ""+dataSnapshot.child("name").getValue();
-                    String dob = ""+dataSnapshot.child("dob").getValue();
-                    String blood = ""+dataSnapshot.child("bloodgroup").getValue();
-                    String receivenid = ""+dataSnapshot.child("nid").getValue();
-                    String Height = ""+dataSnapshot.child("height").getValue();
-                    String Weight = ""+dataSnapshot.child("weight").getValue();
+                    String key = dataSnapshot.child("key").getValue().toString();
+                    databaseReference.child("usersData").child(key)
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String name = ""+dataSnapshot.child("name").getValue();
+                                    String dob = ""+dataSnapshot.child("dob").getValue();
+                                    String blood = ""+dataSnapshot.child("bloodgroup").getValue();
+                                    String receivenid = ""+dataSnapshot.child("nid").getValue();
+                                    String Height = ""+dataSnapshot.child("height").getValue();
+                                    String Weight = ""+dataSnapshot.child("weight").getValue();
 
-                    fullName.setText(name);
-                    dateOfBirth.setText(dob);
-                    bloodGroup.setText(blood);
-                    nid.setText(receivenid);
-                    height.setText(Height);
-                    weight.setText(Weight);
+                                    fullName.setText(name);
+                                    dateOfBirth.setText(dob);
+                                    bloodGroup.setText(blood);
+                                    nid.setText(receivenid);
+                                    height.setText(Height);
+                                    weight.setText(Weight);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EditPersonalInfoActivity.this,"Some Thing Wrong", Toast.LENGTH_SHORT).show();
-                finish();
+                Toast.makeText(getApplicationContext(),"Some Thing Wrong", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -156,7 +168,8 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
             return;
         }
         else if (NID.length()<13 ){
-            Toast.makeText(EditPersonalInfoActivity.this, "Nid number minimum 13 and max 18 numbers", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditPersonalInfoActivity.this, "Nid number minimum 13 and max" +
+                    " 18 numbers", Toast.LENGTH_SHORT).show();
             return;
         }
         else if (TextUtils.isEmpty(BloodGroup)){
@@ -174,21 +187,34 @@ public class EditPersonalInfoActivity extends AppCompatActivity {
         result.put("weight", Weight);
 
 
-        databaseReference.child(uid).updateChildren(result)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+        databaseReference.child("users").child(uid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
-                        finish();
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String k = snapshot.child("key").getValue().toString();
+                        databaseReference.child("usersData").child(k).addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        databaseReference.child("usersData").child(snapshot.getKey()).updateChildren(result);
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(),"Updates Done", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
-                Toast.makeText(EditPersonalInfoActivity.this, "Error ", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(EditPersonalInfoActivity.this, "Error ", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
     private DatePickerDialog.OnDateSetListener datepickerListener = new DatePickerDialog.OnDateSetListener() {

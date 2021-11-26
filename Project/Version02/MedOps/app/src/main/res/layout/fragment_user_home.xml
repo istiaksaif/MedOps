@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white_redis">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -33,39 +33,28 @@
                     android:src="@drawable/prediction_card"
                     android:scaleType="fitXY"/>
             </LinearLayout>
-            <LinearLayout
+            <TextView
+                android:id="@+id/visitText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:id="@+id/predictimg"
-                    android:layout_width="224sp"
-                    android:layout_height="224sp"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="center"/>
-                <TextView
-                    android:id="@+id/predictbutton"
+                android:text="@string/UpcomingVisit"
+                android:textColor="@color/dark"
+                android:textSize="18sp"
+                android:paddingTop="10sp"
+                android:paddingBottom="10sp"
+                android:fontFamily="@font/poppins"
+                android:layout_marginLeft="5dp"/>
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white_redis">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/appoinRecycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Predict Button"
-                    android:background="@drawable/buttonbg"
-                    android:gravity="center"
-                    android:padding="5sp"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/dark"
-                    android:visibility="gone"/>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/predictResult"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:gravity="center"
-                android:textSize="20sp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/dark"/>
+                    android:padding="10dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            </androidx.core.widget.NestedScrollView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>

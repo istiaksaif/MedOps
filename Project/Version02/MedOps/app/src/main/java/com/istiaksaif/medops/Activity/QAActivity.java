@@ -137,23 +137,32 @@ public class QAActivity extends AppCompatActivity {
                         chat.setMessage(snapshot.child("message").getValue().toString());
                         chat.setTime(snapshot.child("time").getValue().toString());
                         String userid = snapshot.child("sender").getValue().toString();
-                        Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("userId").equalTo(userid);
+                        Query query = FirebaseDatabase.getInstance().getReference("users").child(userid);
                         query.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                                for (DataSnapshot dataSnapshot1:snapshot1.getChildren()){
-                                    try {
-                                        chat.setUserName(dataSnapshot1.child("name").getValue().toString());
-                                        chat.setUserImage(dataSnapshot1.child("imageUrl").getValue().toString());
+                                String k = snapshot1.child("key").getValue().toString();
+                                databaseReference.child("usersData").child(k).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        try {
+                                            chat.setUserName(snapshot.child("name").getValue().toString());
+                                            chat.setUserImage(snapshot.child("imageUrl").getValue().toString());
 
-                                        chatArrayList.add(chat);
-                                    }catch (Exception e){
+                                            chatArrayList.add(chat);
+                                        }catch (Exception e){
+
+                                        }
+                                        commnetListAdapter = new CommnetListAdapter(QAActivity.this, chatArrayList);
+                                        commentRecycler.setAdapter(commnetListAdapter);
+                                        commnetListAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
 
                                     }
-                                }
-                                commnetListAdapter = new CommnetListAdapter(QAActivity.this, chatArrayList);
-                                commentRecycler.setAdapter(commnetListAdapter);
-                                commnetListAdapter.notifyDataSetChanged();
+                                });
                             }
 
                             @Override
@@ -191,23 +200,32 @@ public class QAActivity extends AppCompatActivity {
                             Picasso.get().load(R.drawable.dropdown).into(qaimage);
                         }
                         String userid = snapshot.child("userId").getValue().toString();
-                        Query query = FirebaseDatabase.getInstance().getReference("users").orderByChild("userId").equalTo(userid);
+                        Query query = FirebaseDatabase.getInstance().getReference("users").child(userid);
                         query.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                                for (DataSnapshot dataSnapshot1:snapshot1.getChildren()){
-                                    try {
-                                        userName.setText(dataSnapshot1.child("name").getValue().toString());
-                                        String uImage = dataSnapshot1.child("imageUrl").getValue().toString();
+                                String k = snapshot1.child("key").getValue().toString();
+                                databaseReference.child("usersData").child(k).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         try {
-                                            Picasso.get().load(uImage).resize(320,320).into(userImage);
+                                            userName.setText(snapshot.child("name").getValue().toString());
+                                            String uImage = snapshot.child("imageUrl").getValue().toString();
+                                            try {
+                                                Picasso.get().load(uImage).resize(320,320).into(userImage);
+                                            }catch (Exception e){
+                                                Picasso.get().load(R.drawable.dropdown).into(userImage);
+                                            }
                                         }catch (Exception e){
-                                            Picasso.get().load(R.drawable.dropdown).into(userImage);
+
                                         }
-                                    }catch (Exception e){
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
 
                                     }
-                                }
+                                });
                             }
 
                             @Override

@@ -229,26 +229,35 @@ public class OutGoingActivity extends AppCompatActivity {
     }
 
     private void GetDataFromFirebase() {
-        Query query = databaseReference.child("users").orderByChild("userId").equalTo(doctorId);
+        Query query = databaseReference.child("users").child(doctorId);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    try {
-                        Name.setText(snapshot.child("name").getValue().toString());
-                        String Image = snapshot.child("imageUrl").getValue().toString();
+                String k = dataSnapshot.child("key").getValue().toString();
+                databaseReference.child("usersData").child(k).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         try {
-                            Picasso.get().load(Image).into(image);
-                            Picasso.get().load(Image).into(layoutBgImg);
-                        }catch (Exception e){
-                            Picasso.get().load(R.drawable.dropdown).into(image);
-                            Picasso.get().load(R.color.green_white).into(layoutBgImg);
+                            Name.setText(snapshot.child("name").getValue().toString());
+                            String Image = snapshot.child("imageUrl").getValue().toString();
+                            try {
+                                Picasso.get().load(Image).into(image);
+                                Picasso.get().load(Image).into(layoutBgImg);
+                            }catch (Exception e){
+                                Picasso.get().load(R.drawable.dropdown).into(image);
+                                Picasso.get().load(R.color.green_white).into(layoutBgImg);
+                            }
+                            //doctorItem.setStatus(snapshot.child("status").getValue().toString());
+                        } catch (Exception e) {
+
                         }
-                        //doctorItem.setStatus(snapshot.child("status").getValue().toString());
-                    } catch (Exception e) {
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
             }
 
             @Override

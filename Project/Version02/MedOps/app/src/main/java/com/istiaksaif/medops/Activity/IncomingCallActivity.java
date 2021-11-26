@@ -66,8 +66,10 @@ public class IncomingCallActivity extends AppCompatActivity {
         answerCall = findViewById(R.id.answerCall);
 
         GetDataFromFirebase();
-        answerCall.setOnClickListener(view -> sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_ACCEPTED,getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)));
-        endCall.setOnClickListener(view -> sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_REJECTED,getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)));
+        answerCall.setOnClickListener(view -> sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_ACCEPTED,
+                getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)));
+        endCall.setOnClickListener(view -> sendInvitationResponse(Constants.REMOTE_MSG_INVITATION_REJECTED,
+                getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)));
     }
 
     private void sendInvitationResponse(String type,String receiverToken){
@@ -157,26 +159,35 @@ public class IncomingCallActivity extends AppCompatActivity {
     }
 
     private void GetDataFromFirebase() {
-        Query query = databaseReference.child("users").orderByChild("userId").equalTo(userId);
+        Query query = databaseReference.child("users").child(userId);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    try {
-                        Name.setText(snapshot.child("name").getValue().toString());
-                        String Image = snapshot.child("imageUrl").getValue().toString();
+                String k = dataSnapshot.child("key").getValue().toString();
+                databaseReference.child("usersData").child(k).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         try {
-                            Picasso.get().load(Image).resize(320,320).into(image);
-                            Picasso.get().load(Image).into(layoutBgImg);
-                        }catch (Exception e){
-                            Picasso.get().load(R.drawable.dropdown).into(image);
-                            Picasso.get().load(R.color.green_white).into(layoutBgImg);
+                            Name.setText(snapshot.child("name").getValue().toString());
+                            String Image = snapshot.child("imageUrl").getValue().toString();
+                            try {
+                                Picasso.get().load(Image).resize(320,320).into(image);
+                                Picasso.get().load(Image).into(layoutBgImg);
+                            }catch (Exception e){
+                                Picasso.get().load(R.drawable.dropdown).into(image);
+                                Picasso.get().load(R.color.green_white).into(layoutBgImg);
+                            }
+                            //doctorItem.setStatus(snapshot.child("status").getValue().toString());
+                        } catch (Exception e) {
+
                         }
-                        //doctorItem.setStatus(snapshot.child("status").getValue().toString());
-                    } catch (Exception e) {
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
             }
 
             @Override

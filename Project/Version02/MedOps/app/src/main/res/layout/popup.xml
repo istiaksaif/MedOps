@@ -91,7 +91,8 @@
                 android:paddingStart="15dp"
                 android:inputType="textEmailAddress"
                 android:textColorHint="@color/dark"
-                android:background="@null"/>
+                android:background="@null"
+                android:textColor="@color/dark"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <RelativeLayout
