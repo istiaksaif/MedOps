@@ -4,15 +4,17 @@ package com.istiaksaif.medops.Model;
  */
 
 public class User {
-    String name,email,phone,password,dob,bloodgroup,isUser,imageUrl,nid,userId,status,balanceTk;
+    String name,email,phone,height,dob,bloodgroup,isUser,imageUrl,nid,userId,balanceTk,address,weight,key;
 
     public User() {
     }
 
-    public User(String name, String email, String password, String isUser, String phone, String dob, String bloodgroup, String imageUrl, String nid, String userId, String status,String balanceTk) {
+    public User(String name, String email, String address, String isUser, String phone, String dob,
+                String bloodgroup, String imageUrl, String nid, String userId,
+                String balanceTk,String height,String weight,String key) {
         this.name = name;
         this.email = email;
-        this.password = password;
+        this.height = height;
         this.isUser = isUser;
         this.phone = phone;
         this.dob = dob;
@@ -20,17 +22,10 @@ public class User {
         this.imageUrl = imageUrl;
         this.nid = nid;
         this.userId = userId;
-        this.status = status;
         this.balanceTk = balanceTk;
-    }
-
-
-    public String getIsUser() {
-        return isUser;
-    }
-
-    public void setIsUser(String isUser) {
-        this.isUser = isUser;
+        this.address = address;
+        this.weight = weight;
+        this.key = key;
     }
 
     public String getName() {
@@ -49,20 +44,20 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
     }
 
     public String getDob() {
@@ -79,6 +74,14 @@ public class User {
 
     public void setBloodgroup(String bloodgroup) {
         this.bloodgroup = bloodgroup;
+    }
+
+    public String getIsUser() {
+        return isUser;
+    }
+
+    public void setIsUser(String isUser) {
+        this.isUser = isUser;
     }
 
     public String getImageUrl() {
@@ -105,19 +108,27 @@ public class User {
         this.userId = userId;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getBalanceTk() {
         return balanceTk;
     }
 
     public void setBalanceTk(String balanceTk) {
         this.balanceTk = balanceTk;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 }
