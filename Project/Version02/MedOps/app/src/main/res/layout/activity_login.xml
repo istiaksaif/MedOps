@@ -7,6 +7,7 @@
     tools:context=".Activity.LogInActivity"
     android:orientation="vertical"
     android:weightSum="3"
+    android:background="@color/white"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -62,6 +63,7 @@
                 android:paddingStart="15dp"
                 android:inputType="textEmailAddress"
                 android:textColorHint="@color/dark"
+                android:textColor="@color/dark"
                 android:background="@null"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
@@ -83,7 +85,8 @@
                 android:layout_height="55dp"
                 android:paddingStart="15dp"
                 android:inputType="textPassword"
-                android:textColorHint="@color/dark"/>
+                android:textColorHint="@color/dark"
+                android:textColor="@color/dark"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout

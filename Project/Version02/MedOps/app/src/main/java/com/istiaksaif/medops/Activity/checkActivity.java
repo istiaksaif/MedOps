@@ -47,7 +47,7 @@ public class checkActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("users");
+        databaseReference = firebaseDatabase.getReference();
         popupDialogUserTypeDefine();
 
     }
@@ -76,20 +76,34 @@ public class checkActivity extends AppCompatActivity {
                     HashMap<String, Object> result = new HashMap<>();
                     result.put("nid", NID);
 
-                    databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(result)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    databaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    Intent intent = new Intent(checkActivity.this, UserHomeActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    String key = snapshot.child("key").getValue().toString();
+                                    databaseReference.child("usersData").child(key)
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    databaseReference.child("usersData").child(snapshot.getKey()).updateChildren(result);
+                                                    Intent intent = new Intent(checkActivity.this, UserHomeActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(),"Error ", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Toast.makeText(getApplicationContext(),"Error ", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 }else {
                     Toast.makeText(getApplicationContext(),"Please Enter ", Toast.LENGTH_SHORT).show();
                 }

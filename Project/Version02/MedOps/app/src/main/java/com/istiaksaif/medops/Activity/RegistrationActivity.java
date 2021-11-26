@@ -18,10 +18,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.istiaksaif.medops.Model.User;
 import com.istiaksaif.medops.R;
+
+import java.util.HashMap;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -41,7 +48,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("users");
+        databaseReference = firebaseDatabase.getReference();
 
         fullName = findViewById(R.id.name);
         email = findViewById(R.id.eamil);
@@ -68,6 +75,35 @@ public class RegistrationActivity extends AppCompatActivity {
         });
     }
 
+    private  void collectToken(){
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if(!task.isSuccessful()){
+                    return;
+                }
+                String token = task.getResult();
+                databaseReference.child("users").orderByChild("userId").equalTo(user.getUid())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot:snapshot.getChildren()){
+                                    databaseReference.child("users").child(dataSnapshot.getKey())
+                                            .child("token")
+                                            .setValue(token);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+            }
+        });
+    }
+
     private void Register() {
         String FullName = fullName.getText().toString();
         String Email = email.getText().toString();
@@ -88,15 +124,18 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
         else if (NID.length()<13){
-            Toast.makeText(RegistrationActivity.this, "Nid number minimum 13 and max 18 numbers", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegistrationActivity.this, "Nid number minimum 13 and max " +
+                    "18 numbers", Toast.LENGTH_SHORT).show();
             return;
         }
         else if (TextUtils.isEmpty(Password)){
-            Toast.makeText(RegistrationActivity.this, "please enter password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegistrationActivity.this, "please enter password",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         else if (TextUtils.isEmpty(Password_re)){
-            Toast.makeText(RegistrationActivity.this, "please enter password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegistrationActivity.this, "please enter password",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         else if (!Password.equals(Password_re)){
@@ -104,7 +143,8 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
         else if (Password.length()<8){
-            Toast.makeText(RegistrationActivity.this, "password week & password length at least 8 character", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegistrationActivity.this, "password week & password length " +
+                    "at least 8 character", Toast.LENGTH_SHORT).show();
             return;
         }
         else if(!isValidEmail(Email)){
@@ -116,21 +156,34 @@ public class RegistrationActivity extends AppCompatActivity {
         progressDialog.setContentView(R.layout.progress_dialog);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        firebaseAuth.createUserWithEmailAndPassword(Email,Password).addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
+        firebaseAuth.createUserWithEmailAndPassword(Email,Password).addOnCompleteListener(
+                RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
 
             @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            String key = databaseReference.push().getKey();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            User userhelp = new User(FullName,Email,null,"User","","","","",NID,uid,"offline","0");
-                            databaseReference.child(uid).setValue(userhelp);
-                            Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegistrationActivity.this, UserHomeActivity.class);
+                            User userhelp = new User(FullName,Email,key,"User","",""
+                                    ,"","",NID,uid,"0",
+                                    "","",key);
+                            databaseReference.child("usersData").child(key).setValue(userhelp);
+                            HashMap<String, Object> result = new HashMap<>();
+                            result.put("userId", uid);
+                            result.put("key", key);
+                            databaseReference.child("users").child(uid).setValue(result);
+                            collectToken();
+                            Toast.makeText(RegistrationActivity.this, "Registration " +
+                                    "Successful", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(RegistrationActivity.this,
+                                    UserHomeActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(RegistrationActivity.this, "Authentication Failed "+task.getException().toString(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegistrationActivity.this, RegistrationActivity.class);
+                            Toast.makeText(RegistrationActivity.this, "Authentication " +
+                                    "Failed "+task.getException().toString(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(RegistrationActivity.this,
+                                    RegistrationActivity.class);
                             startActivity(intent);
                             progressDialog.dismiss();
                             finish();

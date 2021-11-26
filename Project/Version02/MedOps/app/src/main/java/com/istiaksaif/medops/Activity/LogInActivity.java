@@ -71,7 +71,7 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("users");
+        databaseReference = firebaseDatabase.getReference();
 
         //signin by email
         email = findViewById(R.id.emaillogin);
@@ -93,14 +93,16 @@ public class LogInActivity extends AppCompatActivity {
                     Toast.makeText(LogInActivity.this, "please enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mAuth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(LogInActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(
+                        LogInActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             showProgress();
                             if (task.isSuccessful()) {
                                 checkUserInfo();
                             } else {
-                                Toast.makeText(LogInActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LogInActivity.this, task.getException().toString(),
+                                        Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LogInActivity.this, LogInActivity.class);
                                 startActivity(intent);
                                 progressDialog.dismiss();
@@ -165,8 +167,7 @@ public class LogInActivity extends AppCompatActivity {
 
     }
 
-    private void checkUserInfo() {
-        showProgress();
+    private  void collectToken(){
         FirebaseUser user = mAuth.getCurrentUser();
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
             @Override
@@ -175,54 +176,84 @@ public class LogInActivity extends AppCompatActivity {
                     return;
                 }
                 String token = task.getResult();
-                databaseReference.child(user.getUid()).child("token").setValue(token);
+                databaseReference.child("users").child(user.getUid())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                databaseReference.child("users").child(snapshot.getKey())
+                                        .child("token")
+                                        .setValue(token);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
             }
         });
-        Query query = databaseReference.child(user.getUid());
-        query.addValueEventListener(new ValueEventListener() {
+    }
+    private void checkUserInfo() {
+        showProgress();
+        FirebaseUser user = mAuth.getCurrentUser();
+        collectToken();
+        Query query = databaseReference.child("users").child(user.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child("nid").getValue(String.class).equals("")) {
-                    progressDialog.dismiss();
-                    updateUI(user);
-                    finish();
-                }
-                else{
-                    if (snapshot.child("isUser").getValue(String.class).equals("User")) {
-                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
-                        startActivity(intent);
-                        progressDialog.dismiss();
-                        finish();
-                    }
-                    if (snapshot.child("isUser").getValue(String.class).equals("Doctor")) {
-                        if (user.isEmailVerified()){
-                            HashMap<String, Object> result = new HashMap<>();
-                            result.put("verifyStatus", "verified");
-                            databaseReference.child(user.getUid()).updateChildren(result);
-                            Intent intent = new Intent(LogInActivity.this, DoctorHomeActivity.class);
-                            startActivity(intent);
-                            progressDialog.dismiss();
-                            finish();
-                        }else {
-                            user.sendEmailVerification();
-                            Toast.makeText(LogInActivity.this,"Check your email to verify your account",Toast.LENGTH_LONG).show();
-                            progressDialog.dismiss();
-                            finish();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String key = dataSnapshot.child("key").getValue().toString();
+                    databaseReference.child("usersData").child(key)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.child("nid").getValue(String.class).equals("")) {
+                                    progressDialog.dismiss();
+                                    updateUI(user);
+                                    finish();
+                                } else {
+                                    if (snapshot.child("isUser").getValue(String.class).equals("User")) {
+                                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
+                                        startActivity(intent);
+                                        progressDialog.dismiss();
+                                        finish();
+                                    }
+                                    if (snapshot.child("isUser").getValue(String.class).equals("Doctor")) {
+                                        if (user.isEmailVerified()) {
+                                            HashMap<String, Object> result = new HashMap<>();
+                                            result.put("verifyStatus", "verified");
+                                            databaseReference.child("usersData").child(snapshot.getKey()).updateChildren(result);
+                                            Intent intent = new Intent(LogInActivity.this, DoctorHomeActivity.class);
+                                            startActivity(intent);
+                                            progressDialog.dismiss();
+                                            finish();
+                                        } else {
+                                            user.sendEmailVerification();
+                                            Toast.makeText(LogInActivity.this, "Check your email to " +
+                                                    "verify your account", Toast.LENGTH_LONG).show();
+                                            progressDialog.dismiss();
+                                            finish();
+                                        }
+                                    }
+                                    if (snapshot.child("isUser").getValue(String.class).equals("Nurse")) {
+                                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
+                                        startActivity(intent);
+                                        progressDialog.dismiss();
+                                        finish();
+                                    }
+                                    if (snapshot.child("isUser").getValue(String.class).equals("Admin")) {
+                                        Intent intent = new Intent(LogInActivity.this, AdminManagerHomeActivity.class);
+                                        startActivity(intent);
+                                        progressDialog.dismiss();
+                                        finish();
+                                    }
+                                }
                         }
-                    }
-                    if (snapshot.child("isUser").getValue(String.class).equals("Nurse")) {
-                        Intent intent = new Intent(LogInActivity.this, UserHomeActivity.class);
-                        startActivity(intent);
-                        progressDialog.dismiss();
-                        finish();
-                    }
-                    if (snapshot.child("isUser").getValue(String.class).equals("Admin")) {
-                        Intent intent = new Intent(LogInActivity.this, AdminManagerHomeActivity.class);
-                        startActivity(intent);
-                        progressDialog.dismiss();
-                        finish();
-                    }
-                }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
             }
 
             @Override
@@ -285,12 +316,18 @@ public class LogInActivity extends AppCompatActivity {
 
     private void pushData() {
         showProgress();
+        String key = databaseReference.push().getKey();
         FirebaseUser user = mAuth.getCurrentUser();
         String pname = user.getDisplayName();
         String pEmail = user.getEmail();
-        String Status = "";
-        User userhelp = new User(pname,pEmail,null,"User","","","","","",user.getUid(),Status,"0");
-        databaseReference.child(mAuth.getCurrentUser().getUid()).setValue(userhelp);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("userId", user.getUid());
+        result.put("key", key);
+        databaseReference.child("users").child(user.getUid()).setValue(result);
+        User userhelp = new User(pname,pEmail,"","User","","",
+                "","",user.getUid(),"","0","","",key);
+        databaseReference.child("usersData").child(key).setValue(userhelp);
+        collectToken();
         updateUI(user);
     }
 
@@ -334,17 +371,20 @@ public class LogInActivity extends AppCompatActivity {
         }
         else {
             showProgress();
-            mAuth.sendPasswordResetEmail(popup_email.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mAuth.sendPasswordResetEmail(popup_email.getText().toString()).
+                    addOnCompleteListener(new OnCompleteListener<Void>() {
               @Override
               public void onComplete(@NonNull Task<Void> task) {
                  if(task.isSuccessful()){
                      progressDialog.dismiss();
-                     Toast.makeText(LogInActivity.this, "please check your email and reset password", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(LogInActivity.this, "please check your email and " +
+                             "reset password", Toast.LENGTH_SHORT).show();
                      dialog.dismiss();
                  }
                  else{
                      progressDialog.dismiss();
-                     Toast.makeText(LogInActivity.this, "Unsuccessful"+task.getException().toString(), Toast.LENGTH_SHORT).show();
+                     Toast.makeText(LogInActivity.this, "Unsuccessful"+task.getException()
+                             .toString(), Toast.LENGTH_SHORT).show();
                      dialog.dismiss();
                  }
               }
