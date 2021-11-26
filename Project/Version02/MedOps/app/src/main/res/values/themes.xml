@@ -12,6 +12,11 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/green_white</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowEnterTransition">@transition/tran_anim</item>
+        <item name="android:windowExitTransition">@transition/tran_anim</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/shared_tran</item>
+        <item name="android:windowSharedElementExitTransition">@transition/shared_tran</item>
     </style>
     <style name="Theme.statusBarTransparent" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
@@ -30,10 +35,15 @@
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowTranslucentStatus">true</item>
 <!--        <item name="android:windowTranslucentNavigation">true</item>-->
+        <item name="android:windowEnterTransition">@transition/tran_anim</item>
+        <item name="android:windowExitTransition">@transition/tran_anim</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/shared_tran</item>
+        <item name="android:windowSharedElementExitTransition">@transition/shared_tran</item>
     </style>
     <style name="NumberPickerCustomText">
         <item name="android:textSize">24sp</item>
         <item name="android:fontFamily">@font/eczar_semibold</item>
         <item name="colorControlNormal">@color/dark_blue</item>
+        <item name="android:textColorPrimary">@color/dark_blue</item>
     </style>
 </resources>

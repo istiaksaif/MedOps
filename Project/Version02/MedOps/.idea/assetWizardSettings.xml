@@ -81,7 +81,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$PROJECT_DIR$/app/src/main/res/drawable" />
+                                                <entry key="imagePath" value="$USER_HOME$/Downloads/Asset 8@2x.png" />
                                                 <entry key="scalingPercent" value="78" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
@@ -118,6 +118,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="d6f9e6" />
+                                      <entry key="outputName" value="ic_launcher1" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -309,11 +311,6 @@
                             </entry>
                           </map>
                         </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
-                          </map>
-                        </option>
                       </PersistentState>
                     </value>
                   </entry>
@@ -333,8 +330,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="prediction_card" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/prediction part.svg" />
+                            <entry key="outputName" value="ic_clock" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/free/clock.svg" />
                           </map>
                         </option>
                       </PersistentState>
