@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.AppointmentDoctorActivity">
     <com.google.android.material.appbar.AppBarLayout
@@ -27,7 +28,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="350sp"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitXY"/>
+                    android:scaleType="centerCrop"
+                    android:transitionName="proImg"/>
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

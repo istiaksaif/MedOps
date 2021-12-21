@@ -19,6 +19,9 @@ import android.widget.Toast;
 
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,9 +38,11 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class AppointmentDoctorActivity extends AppCompatActivity{
 
@@ -101,22 +106,57 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
         GetDataFromFirebase();
 
         appoinButton = findViewById(R.id.takeapponbtn);
-        databaseReference.child("users").child(doctorId).child("appointment").orderByChild("userId").equalTo(uid)
+        databaseReference.child("users").child(doctorId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            try {
-                                String s = snapshot.child("status").getValue().toString();
-                                if(s.equals("confirm")){
-                                    appoinButton.setVisibility(View.GONE);
-                                    videoCallButton.setVisibility(View.VISIBLE);
-                                    sufficient_balance.setVisibility(View.GONE);
+                        String k = dataSnapshot.child("key").getValue().toString();
+                        databaseReference.child("usersData").child(k).child("appointment")
+                                .orderByChild("userId").equalTo(uid).
+                                addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                                for (DataSnapshot snapshot : dataSnapshot1.getChildren()) {
+                                    try {
+                                        String s = snapshot.child("status").getValue().toString();
+                                        String d = snapshot.child("date").getValue().toString();
+                                        String t = snapshot.child("time").getValue().toString();
+
+                                        SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+                                        int ts1 = (int) (format.parse(d.trim() + " " + t.trim()).getTime() / 1000);
+
+                                        Calendar calendar = Calendar.getInstance();
+                                        calendar.setTime(new Date());
+                                        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+
+                                        sdf.setCalendar(calendar);
+                                        sdf.setTimeZone(TimeZone.getTimeZone("BST"));
+
+                                        String serverTime = sdf.format(calendar.getTime());
+                                        int ts = (int) (sdf.parse(serverTime.trim()).getTime()/ 1000);
+                                        if(s.equals("confirm")){
+                                            if(ts>ts1){
+                                                appoinButton.setVisibility(View.GONE);
+                                                videoCallButton.setVisibility(View.VISIBLE);
+                                                sufficient_balance.setVisibility(View.GONE);
+                                            }else if(ts<ts1){
+                                                appoinButton.setVisibility(View.GONE);
+                                                videoCallButton.setVisibility(View.VISIBLE);
+                                                videoCallButton.setBackground(getResources().getDrawable(R.drawable.rectangle_confirm1));
+                                                sufficient_balance.setVisibility(View.GONE);
+                                            }
+                                        }
+                                    }catch (Exception e){
+
+                                    }
                                 }
-                            }catch (Exception e){
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
                             }
-                        }
+                        });
                     }
 
                     @Override
@@ -149,7 +189,8 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
                         int nMonth = calendar.get(Calendar.MONTH);
                         int nDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, datepickerListener, nYear, nMonth, nDay);
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(),
+                                android.R.style.Theme_Holo_Light_Dialog_MinWidth, datepickerListener, nYear, nMonth, nDay);
                         datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         datePickerDialog.show();
                     }
@@ -172,19 +213,33 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
                         result.put("userId", uid);
                         result.put("status", "confirm");
 
-                        databaseReference.child("users").orderByChild("userId").equalTo(uid)
+                        databaseReference.child("users").child(uid)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        int balance = 0;
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                                String s = snapshot.child("balanceTk").getValue(String.class);
-                                                balance = (Integer.parseInt(s.trim()))-(Integer.parseInt(consultFee.getText().toString().trim()));
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String k = snapshot.child("key").getValue().toString();
+                                        databaseReference.child("usersData").child(k).addListenerForSingleValueEvent(
+                                                new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        int balance = 0;
+                                                        String s = snapshot.child("balanceTk").getValue(String.class);
+                                                        balance = (Integer.parseInt(s.trim()))-(
+                                                                Integer.parseInt(consultFee.getText().toString().trim()));
 
-                                                HashMap<String, Object> result1 = new HashMap<>();
-                                                result1.put("balanceTk", String.valueOf(balance));
-                                                databaseReference.child("users").child(uid).updateChildren(result1);
-                                        }
+                                                        HashMap<String, Object> result1 = new HashMap<>();
+                                                        result1.put("balanceTk", String.valueOf(balance));
+                                                        databaseReference.child("usersData").
+                                                                child(snapshot.getKey()).updateChildren(result1);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        Toast.makeText(AppointmentDoctorActivity.this,
+                                                                "Error ", Toast.LENGTH_SHORT).show();
+                                                        finish();
+                                                    }
+                                                });
                                     }
 
                                     @Override
@@ -192,12 +247,52 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
 
                                     }
                                 });
-                        databaseReference.child("users").child(doctorId).child("appointment").child(q).updateChildren(result);
-                        appoinButton.setVisibility(View.GONE);
-                        videoCallButton.setVisibility(View.VISIBLE);
-                        bottomSheetDialog.dismiss();
-                        getIntent().setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                        databaseReference.child("users").child(doctorId).
+                                addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String k = snapshot.child("key").getValue().toString();
+                                databaseReference.child("usersData").child(k).child("appointment")
+                                        .child(q).updateChildren(result).addOnCompleteListener(
+                                                new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        appoinButton.setVisibility(View.GONE);
+                                        videoCallButton.setVisibility(View.VISIBLE);
+                                        bottomSheetDialog.dismiss();
+                                    }
+                                });
+                                result.put("doctorId", doctorId);
+                                databaseReference.child("appointment")
+                                        .child(q).updateChildren(result);
+                                databaseReference.child("usersData").child(k)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        int balance2 = 0;
+                                        String ss = snapshot.child("balanceTk").getValue(String.class);
+                                        balance2 = (Integer.parseInt(ss.trim()))+(
+                                                Integer.parseInt(consultFee.getText().toString().trim()));
+
+                                        HashMap<String, Object> result2 = new HashMap<>();
+                                        result2.put("balanceTk", String.valueOf(balance2));
+                                        databaseReference.child("usersData").
+                                                child(snapshot.getKey()).updateChildren(result2);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
                 });
                 cross = (LottieAnimationView) bottomSheetDialog.findViewById(R.id.cross);
@@ -240,46 +335,61 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
                         setTime = (hour.getText().toString()+":"+min.getText().toString());
                         int minsToAdd = 15;
 
-                        databaseReference.child("users").child(doctorId).child("appointment")
-                                .addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        List<Integer> intArray = new ArrayList<>();
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            try {
-                                                String s = snapshot.child("time").getValue(String.class);//time=19:15
-                                                String d = snapshot.child("date").getValue(String.class);
+                        databaseReference.child("users").child(doctorId).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String k = snapshot.child("key").getValue().toString();
+                                databaseReference.child("usersData").child(k).child("appointment").
+                                        addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                List<Integer> intArray = new ArrayList<>();
+                                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                    try {
+                                                        String s = snapshot.child("time").getValue(String.class);//time=19:15
+                                                        String d = snapshot.child("date").getValue(String.class);
 
-                                                SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
-                                                long ts = format.parse(date.getText().toString() + setTime).getTime() / 1000;
-                                                int dd = (int) ts;
-                                                long ts1 = format.parse(d.trim() + " " + s.trim()).getTime() / 1000;
-                                                intArray.add((int) ts1);
-                                                for (int k = 0; k < intArray.size(); k++) {
-                                                    if ((dd - minsToAdd * 60) < intArray.get(k) && (dd + minsToAdd * 60) > intArray.get(k)) {
-                                                        available_status.setText(R.string.timeUnavailable);
-                                                        available_status.setTextColor(getResources().getColor(R.color.pink));
-                                                        confirmButton.setClickable(false);
-                                                        confirmButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.rectangle_confirm1));
-                                                        break;
-                                                    } else {
-                                                        available_status.setText(R.string.idealTime);
-                                                        confirmButton.setClickable(true);
-                                                        available_status.setTextColor(getResources().getColor(R.color.dark));
-                                                        confirmButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.rectangle_confirm));
+                                                        SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+                                                        long ts = format.parse(date.getText().toString()
+                                                                + setTime).getTime() / 1000;
+                                                        int dd = (int) ts;
+                                                        long ts1 = format.parse(d.trim() + " " + s.trim()).getTime() / 1000;
+                                                        intArray.add((int) ts1);
+                                                        for (int k = 0; k < intArray.size(); k++) {
+                                                            if ((dd - minsToAdd * 60) < intArray.get(k) &&
+                                                                    (dd + minsToAdd * 60) > intArray.get(k)) {
+                                                                available_status.setText(R.string.timeUnavailable);
+                                                                available_status.setTextColor(getResources().getColor(R.color.pink));
+                                                                confirmButton.setClickable(false);
+                                                                confirmButton.setBackgroundDrawable(
+                                                                        getResources().getDrawable(R.drawable.rectangle_confirm1));
+                                                                break;
+                                                            } else {
+                                                                available_status.setText(R.string.idealTime);
+                                                                confirmButton.setClickable(true);
+                                                                available_status.setTextColor(getResources().getColor(R.color.dark));
+                                                                confirmButton.setBackgroundDrawable(
+                                                                        getResources().getDrawable(R.drawable.rectangle_confirm));
+                                                            }
+                                                        }
+                                                    } catch (Exception e) {
+
                                                     }
                                                 }
-                                            } catch (Exception e) {
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
 
                                             }
-                                        }
-                                    }
+                                        });
+                            }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                    }
-                                });
+                            }
+                        });
                     }
                 });
                 found=true;
@@ -289,7 +399,8 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
         if(!found){
             confirmButton.setClickable(false);
             confirmButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.rectangle_confirm1));
-            Toast.makeText(getApplicationContext(), "Doctor isn't available at "+nameOfDay.getText().toString()+"", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Doctor isn't available at "+nameOfDay.
+                    getText().toString()+"", Toast.LENGTH_SHORT).show();
         }
         if(found==true && hour.getText().toString().equals(null) && min.getText().toString().equals(null)) {
             confirmButton.setClickable(true);
@@ -298,94 +409,117 @@ public class AppointmentDoctorActivity extends AppCompatActivity{
     }
 
     private void GetDataFromFirebase() {
-        Query query = databaseReference.child("users").orderByChild("userId").equalTo(doctorId);
+        Query query = databaseReference.child("users").child(doctorId);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    try {
-                        String fee = snapshot.child("consultFee").getValue().toString();
-                        consultFee.setText(fee);
-                        databaseReference.child("users").orderByChild("userId").equalTo(uid)
-                                .addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            try {
-                                                String balanceTk = snapshot.child("balanceTk").getValue().toString();
-                                                if(Integer.parseInt(balanceTk)>=Integer.parseInt(fee)){
-                                                    sufficient_balance.setVisibility(View.GONE);
-                                                }else {
-                                                    sufficient_balance.setVisibility(View.VISIBLE);
-                                                    appoinButton.setClickable(false);
-                                                    appoinButton.setBackground(getResources().getDrawable(R.drawable.rectangle_33));
+                String k = dataSnapshot.child("key").getValue().toString();
+                databaseReference.child("usersData").child(k).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                try {
+                                    String fee = snapshot.child("consultFee").getValue().toString();
+                                    consultFee.setText(fee);
+                                    databaseReference.child("users").child(uid)
+                                            .addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    String key = dataSnapshot.child("key").getValue().toString();
+                                                    databaseReference.child("usersData").child(key)
+                                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    try {
+                                                                        String balanceTk = snapshot.child("balanceTk")
+                                                                                .getValue().toString();
+                                                                        if(Integer.parseInt(balanceTk)>=Integer.parseInt(fee)){
+                                                                            sufficient_balance.setVisibility(View.GONE);
+                                                                        }else {
+                                                                            sufficient_balance.setVisibility(View.VISIBLE);
+                                                                            appoinButton.setClickable(false);
+                                                                            appoinButton.setBackground(
+                                                                                    getResources()
+                                                                                            .getDrawable(R.drawable.rectangle_33));
+                                                                        }
+                                                                    }catch (Exception e){
+
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                }
+                                                            });
                                                 }
-                                            }catch (Exception e){
 
-                                            }
-                                        }
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                    String name = snapshot.child("name").getValue().toString();
+                                    String splitName[] = name.split(" ");
+                                    int i = splitName.length;
+                                    drNickName.setText(splitName[i-1]);
+                                    drName.setText(name.replace(splitName[i-1],""));
+                                    workingIn.setText(snapshot.child("workingIn").getValue().toString());
+                                    drStudies.setText(snapshot.child("degrees").getValue().toString());
+                                    drDesignation.setText(snapshot.child("designation").getValue().toString());
+                                    consultDays.setText(snapshot.child("consultDays").getValue().toString());
+                                    String experience = snapshot.child("workingExperience").getValue().toString();
+                                    try {
+                                        String str1[] = experience.split("/");
+                                        int dayOfMonth1 = Integer.parseInt(str1[0]);
+                                        int month1 = Integer.parseInt(str1[1]);
+                                        int year1 = Integer.parseInt(str1[2]);
+                                        age.setDateOfBirth(year1, month1, dayOfMonth1);
+                                        age.calcualteYear();
+                                        age.calcualteMonth();
+                                        age.calcualteDay();
+                                        workingExperience.setText(age.getResult());
+                                    }catch (Exception e){
+
                                     }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
+                                    String Image = snapshot.child("imageUrl").getValue().toString();
+                                    try {
+                                        Picasso.get().load(Image).resize(320,320).into(drImage);
+                                    }catch (Exception e){
+                                        Picasso.get().load(R.drawable.dropdown).into(drImage);
                                     }
-                                });
-                        String name = snapshot.child("name").getValue().toString();
-                        String splitName[] = name.split(" ");
-                        int i = splitName.length;
-                        drNickName.setText(splitName[i-1]);
-                        drName.setText(name.replace(splitName[i-1],""));
-                        workingIn.setText(snapshot.child("workingIn").getValue().toString());
-                        drStudies.setText(snapshot.child("degrees").getValue().toString());
-                        drDesignation.setText(snapshot.child("designation").getValue().toString());
-                        consultDays.setText(snapshot.child("consultDays").getValue().toString());
-                        String experience = snapshot.child("workingExperience").getValue().toString();
-                        try {
-                            String str1[] = experience.split("/");
-                            int dayOfMonth1 = Integer.parseInt(str1[0]);
-                            int month1 = Integer.parseInt(str1[1]);
-                            int year1 = Integer.parseInt(str1[2]);
-                            age.setDateOfBirth(year1, month1, dayOfMonth1);
-                            age.calcualteYear();
-                            age.calcualteMonth();
-                            age.calcualteDay();
-                            workingExperience.setText(age.getResult());
-                        }catch (Exception e){
+                                    String timeS = snapshot.child("consultHour").getValue().toString();
 
-                        }
-                        String Image = snapshot.child("imageUrl").getValue().toString();
-                        try {
-                            Picasso.get().load(Image).into(drImage);
-                        }catch (Exception e){
-                            Picasso.get().load(R.drawable.dropdown).into(drImage);
-                        }
-                        String timeS = snapshot.child("consultHour").getValue().toString();
+                                    String splitTime[] = timeS.split(":");
+                                    time  = Integer.parseInt(splitTime[0]);
+                                    if (time>12){
+                                        consultHour.setText(String.valueOf(time-12));
+                                        consulthourstatus.setText("pm-");
+                                    }else {
+                                        consultHour.setText(String.valueOf(time));
+                                        consulthourstatus.setText("am-");
+                                    }
+                                    String timeS1 = snapshot.child("consultHourTo").getValue().toString();
+                                    String splittime[] = timeS1.split(":");
+                                    time1 = Integer.parseInt(splittime[0]);
+                                    if (time1>12){
+                                        consultHourTo.setText(String.valueOf(time1-12));
+                                        consulthourtostatus.setText("pm");
+                                    }else {
+                                        consultHourTo.setText(String.valueOf(time1));
+                                        consulthourtostatus.setText("am");
+                                    }
+                                    //doctorItem.setStatus(snapshot.child("status").getValue().toString());
+                                } catch (Exception e) {
 
-                        String splitTime[] = timeS.split(":");
-                        time  = Integer.parseInt(splitTime[0]);
-                        if (time>12){
-                            consultHour.setText(String.valueOf(time-12));
-                            consulthourstatus.setText("pm-");
-                        }else {
-                            consultHour.setText(String.valueOf(time));
-                            consulthourstatus.setText("am-");
-                        }
-                        String timeS1 = snapshot.child("consultHourTo").getValue().toString();
-                        String splittime[] = timeS1.split(":");
-                        time1 = Integer.parseInt(splittime[0]);
-                        if (time1>12){
-                            consultHourTo.setText(String.valueOf(time1-12));
-                            consulthourtostatus.setText("pm");
-                        }else {
-                            consultHourTo.setText(String.valueOf(time1));
-                            consulthourtostatus.setText("am");
-                        }
-                        //doctorItem.setStatus(snapshot.child("status").getValue().toString());
-                    } catch (Exception e) {
+                                }
+                            }
 
-                    }
-                }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
             }
 
             @Override
