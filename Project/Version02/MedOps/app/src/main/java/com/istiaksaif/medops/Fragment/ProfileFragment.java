@@ -38,7 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.istiaksaif.medops.Activity.AddMoneyActivity;
-import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
+//import com.istiaksaif.medops.Activity.EditPersonalInfoActivity;
 import com.istiaksaif.medops.Activity.EditProfessionalInfoActivity;
 import com.istiaksaif.medops.Activity.UserHomeActivity;
 import com.istiaksaif.medops.Activity.checkActivity;
@@ -129,8 +129,8 @@ public class ProfileFragment extends Fragment {
         personalinfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), EditPersonalInfoActivity.class);
+//                startActivity(intent);
             }
         });
         professionalInfo.setOnClickListener(new View.OnClickListener() {

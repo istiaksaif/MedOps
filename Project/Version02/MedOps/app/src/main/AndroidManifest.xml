@@ -19,11 +19,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MedOps">
         <activity
+            android:name=".Activity.WebActivity"
+            android:exported="true" />
+        <activity
             android:name=".Activity.PredictActivity"
             android:exported="true"
+            android:hardwareAccelerated="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.statusBarTransparent"
-            android:hardwareAccelerated="false"/>
+            android:theme="@style/Theme.statusBarTransparent" />
         <activity
             android:name=".Activity.EditProfessionalInfoActivity"
             android:exported="true"
@@ -58,16 +61,22 @@
         <activity
             android:name=".Activity.AskQusActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity" />
-        <activity
-            android:name=".Activity.LogInActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.statusBarTransparent">
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activity.LogInActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.statusBarTransparent">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".Activity.RegistrationActivity"
@@ -80,9 +89,9 @@
         <activity
             android:name=".Activity.UserHomeActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activity.EditPersonalInfoActivity"
-            android:screenOrientation="portrait" />
+<!--        <activity-->
+<!--            android:name=".Activity.EditPersonalInfoActivity"-->
+<!--            android:screenOrientation="portrait" />-->
         <activity
             android:name=".Activity.AdminManagerHomeActivity"
             android:screenOrientation="portrait" />
