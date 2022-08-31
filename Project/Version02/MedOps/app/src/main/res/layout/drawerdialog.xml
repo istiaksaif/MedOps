@@ -141,16 +141,16 @@
                         android:layout_height="40sp"
                         android:padding="5sp"
                         android:src="@drawable/privacypolicy"/>
+
                     <TextView
                         android:id="@+id/text3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Privacy Policy"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textSize="14sp"
-                        android:textColor="@color/dark"
                         android:layout_below="@+id/img3"
-                        />
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="Privacy Policy"
+                        android:textColor="@color/dark"
+                        android:textSize="14sp" />
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
@@ -244,21 +244,22 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:padding="10sp">
+
                     <ImageView
                         android:id="@+id/img5"
                         android:layout_width="40sp"
                         android:layout_height="40sp"
                         android:padding="5sp"
-                        android:src="@drawable/logout"/>
+                        android:src="@drawable/logout" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Log Out"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textSize="14sp"
-                        android:textColor="@color/dark"
                         android:layout_below="@+id/img5"
-                        />
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="Log Out"
+                        android:textColor="@color/dark"
+                        android:textSize="14sp" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

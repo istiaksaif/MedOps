@@ -28,8 +28,8 @@ import com.istiaksaif.medops.network.ApiClient;
 import com.istiaksaif.medops.network.ApiService;
 import com.squareup.picasso.Picasso;
 
-import org.jitsi.meet.sdk.JitsiMeetActivity;
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
+//import org.jitsi.meet.sdk.JitsiMeetActivity;
+//import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
